@@ -1,0 +1,16 @@
+{
+  "name": "Hop & Count",
+  "short_name": "Hop & Count",
+  "description": "Grade 1 math games: skip counting, numbers to 120, comparing and adding to 10.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#dff3ff",
+  "theme_color": "#46b04a",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

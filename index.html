@@ -1,0 +1,1597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hop &amp; Count</title>
+<meta name="description" content="Grade 1 math games: skip counting, numbers to 120, comparing and adding to 10.">
+<meta name="theme-color" content="#46b04a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hop & Count">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap">
+<style>
+/* Base reset (replaces the artifact host skeleton) */
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<style>
+/* Layout: one centred playfield column, a sunny pond world. Deliberately single bright theme for young kids. */
+:root{
+  --sky:#dff3ff; --sky-2:#c4e8ff; --water:#6fcbe0; --water-d:#3fa8c4;
+  --ink:#1d2b53; --muted:#4a5a85; --card:#ffffff; --paper:#fbfaf6;
+  --lily:#46b04a; --lily-d:#2f8a3a; --lily-l:#9be07a; --lily-bg:#e6f7e2;
+  --sun:#ffcf3f; --sun-d:#e9a800; --sun-bg:#fff6d6; --berry:#ff5d73; --berry-d:#d63c55; --berry-bg:#ffe8ec;
+  --blue:#4f7cff; --blue-d:#2a4fc0;
+  --display:"Baloo 2","Chalkboard SE","Comic Sans MS",system-ui,sans-serif;
+  --body:"Nunito",system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+html,body{min-height:100%}
+body{background:var(--sky);color:var(--ink);font-family:var(--body);font-weight:600;font-size:17px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background-image:radial-gradient(circle at 85% -10%,#fff7c9 0 120px,transparent 260px);background-repeat:no-repeat}
+.app{max-width:720px;margin:0 auto;padding-block:20px 40px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:4px solid var(--berry);outline-offset:3px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+
+/* ---------- Home ---------- */
+.hero{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hero svg{width:84px;height:70px;flex:none}
+.hero-text{flex:1;min-width:0}
+.hero h1{font-size:clamp(2.2rem,8vw,3.2rem);font-weight:800;line-height:1;letter-spacing:-.01em}
+.hero p{margin:6px 0 0;color:var(--muted);max-width:44ch}
+.startotal{display:inline-flex;align-items:center;gap:6px;background:var(--card);border-radius:999px;padding:6px 14px;
+  font-family:var(--display);font-weight:800;font-size:1.15rem;box-shadow:0 3px 0 var(--sky-2)}
+.startotal .st{color:var(--sun-d)}
+.daily{margin-top:20px;width:100%;border:none;border-radius:24px;background:var(--lily);color:#fff;padding:18px 20px;text-align:left;
+  display:flex;align-items:center;gap:16px;box-shadow:0 6px 0 var(--lily-d)}
+.daily:active{transform:translateY(3px);box-shadow:0 3px 0 var(--lily-d)}
+.daily .glyph{font-size:2.6rem}
+.daily h2{font-size:1.7rem;line-height:1.05}
+.daily p{margin:2px 0 0}
+.sec-h{font-size:1.5rem;margin:30px 0 4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sec-p{margin:0 0 12px;color:var(--muted)}
+.badge{font-family:var(--body);font-size:.75rem;font-weight:800;background:var(--berry-bg);color:var(--berry-d);border-radius:999px;padding:3px 10px;text-transform:uppercase;letter-spacing:.06em}
+.badge:empty{display:none}
+
+.panel{background:var(--card);border-radius:24px;padding:18px;display:grid;gap:12px;box-shadow:0 5px 0 var(--sky-2)}
+details.panel summary{cursor:pointer;font-family:var(--display);font-weight:800;font-size:1.1rem;list-style-position:inside}
+details.panel[open]{gap:12px}
+.label{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:var(--body);font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{min-width:58px;height:58px;border-radius:18px;border:3px solid var(--sky-2);background:var(--sky);
+  font-family:var(--display);font-weight:800;font-size:1.55rem;padding:0 12px;transition:transform .12s}
+.chip.wide{font-size:1.05rem;height:50px}
+.chip[aria-pressed="true"]{background:var(--sun);border-color:var(--sun-d);box-shadow:0 4px 0 var(--sun-d);transform:translateY(-2px)}
+.chip:active{transform:translateY(1px)}
+.preview{margin:0;font-family:var(--display);font-size:1.3rem;font-variant-numeric:tabular-nums;color:var(--lily-d);overflow-wrap:anywhere}
+
+.modes{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.mode{border:none;text-align:left;border-radius:24px;padding:18px;display:grid;gap:6px;align-content:start;
+  box-shadow:0 6px 0 rgba(29,43,83,.18);transition:transform .12s}
+.mode:hover{transform:translateY(-3px)}
+.mode:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(29,43,83,.18)}
+.mode h3{font-size:1.5rem;line-height:1.1}
+.mode p{margin:0;font-size:.98rem}
+.mode .ms{font-size:1.4rem;letter-spacing:2px;color:rgba(29,43,83,.25)}
+.mode .ms b{color:var(--ink);font-weight:400}
+.mode .mb{font-family:var(--display);font-size:1.05rem}
+.glyph{font-family:var(--display);font-weight:800;font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}
+.m-frog{background:var(--lily-l)} .m-train{background:var(--sun)} .m-balloon{background:#ffb3c0}
+.m-practice{background:#c9d8ff} .m-mock{background:var(--card);border:3px solid var(--ink)}
+.m-pics{background:#ffd9b0} .m-tens{background:#d9c9ff}
+.m-num{background:#bfe4ff} .m-cmp{background:#c8efc0} .m-add{background:#ffe0a8} .m-shape{background:#e7d6ff}
+.mode .ico{width:56px;height:46px}
+.mode .tag{justify-self:start;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;background:var(--ink);color:#fff;border-radius:6px;padding:2px 8px}
+.grownup{margin-top:30px;display:flex;justify-content:center}
+
+/* ---------- Game shell ---------- */
+.bar{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.btn{border:none;border-radius:16px;background:var(--card);padding:10px 16px;font-family:var(--display);font-weight:800;font-size:1.1rem;box-shadow:0 4px 0 var(--sky-2)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--sky-2)}
+.btn.go{background:var(--lily);color:#fff;box-shadow:0 4px 0 var(--lily-d)}
+.btn.warn{background:var(--berry);color:#fff;box-shadow:0 4px 0 var(--berry-d)}
+.gtitle{font-size:1.5rem;text-align:center;flex:1;min-width:0}
+.trail{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;justify-content:center}
+.trail span{min-width:44px;height:40px;padding:0 6px;border-radius:12px;display:grid;place-items:center;background:var(--card);
+  font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--sky-2);font-variant-numeric:tabular-nums}
+.trail span.done{color:var(--lily-d)}
+.trail span.now{background:var(--sun);color:var(--ink);box-shadow:0 3px 0 var(--sun-d)}
+.trail.dots span{min-width:34px;height:34px;font-size:1rem;color:var(--muted)}
+.trail.dots span.done{background:var(--lily);color:#fff}
+.ask{text-align:center;font-family:var(--display);font-size:clamp(1.3rem,4.6vw,1.7rem);line-height:1.2;margin:16px 0 12px;text-wrap:balance}
+.ask:empty{margin:8px 0}
+.hint{min-height:2.6em;text-align:center;margin:12px auto 0;max-width:46ch;font-size:1.15rem;color:var(--berry-d);font-weight:800;text-wrap:balance}
+.hint.calm{color:var(--lily-d)}
+
+@keyframes wobble{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}
+.wobble{animation:wobble .45s}
+
+/* ---------- Frog ---------- */
+.pond{background:linear-gradient(var(--water),var(--water-d));border-radius:28px;padding:22px 14px 26px;display:grid;gap:22px;justify-items:center;overflow:hidden}
+.rock{position:relative;width:170px;height:118px;display:grid;justify-items:center}
+.rock::after{content:"";position:absolute;bottom:0;left:0;right:0;height:46px;border-radius:50%;background:#8a96a8;box-shadow:inset 0 -8px 0 #6b778a}
+.rocknum{position:absolute;bottom:4px;z-index:2;font-family:var(--display);font-weight:800;font-size:1.7rem;color:#fff}
+.frog{position:relative;z-index:3;width:110px;height:92px;margin-top:-6px}
+.frog svg{width:100%;height:100%}
+@keyframes hop{0%{transform:translate(0,0)}45%{transform:translate(0,-80px) scale(1.08)}100%{transform:translate(0,30px) scale(.6);opacity:0}}
+.frog.hop{animation:hop .55s ease-in forwards}
+.pads{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+.pad{position:relative;width:96px;height:96px;border-radius:50%;border:none;background:radial-gradient(circle at 40% 35%,var(--lily-l),var(--lily) 60%,var(--lily-d));
+  font-family:var(--display);font-weight:800;font-size:2rem;color:#fff;text-shadow:0 2px 0 var(--lily-d);box-shadow:0 6px 0 rgba(0,40,60,.25);transition:transform .12s,opacity .2s}
+.pad::after{content:"";position:absolute;top:6px;right:14px;width:22px;height:22px;background:var(--water);transform:rotate(45deg);border-radius:3px}
+.pad span{position:relative;z-index:1}
+.pad:hover{transform:scale(1.05)}
+.pad.right{background:radial-gradient(circle at 40% 35%,#fff7c9,var(--sun) 60%,var(--sun-d));text-shadow:0 2px 0 var(--sun-d)}
+.pad.nope{opacity:.4}
+
+/* ---------- Train ---------- */
+.track{background:var(--card);border-radius:28px;padding:20px 12px 26px;position:relative;overflow:hidden}
+.track::after{content:"";position:absolute;left:0;right:0;bottom:12px;height:6px;background:repeating-linear-gradient(90deg,#8a6a4a 0 14px,transparent 14px 22px)}
+.train{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:flex-end}
+@keyframes chug{0%{transform:translateX(0)}100%{transform:translateX(110%)}}
+.train.go{animation:chug .8s ease-in forwards}
+.engine{width:72px;height:72px}
+.car{min-width:68px;height:62px;padding:0 4px;border-radius:12px 12px 6px 6px;background:var(--berry);color:#fff;display:grid;place-items:center;position:relative;
+  font-family:var(--display);font-weight:800;font-size:1.6rem;font-variant-numeric:tabular-nums;box-shadow:inset 0 -8px 0 var(--berry-d)}
+.car:nth-child(odd){background:var(--blue);box-shadow:inset 0 -8px 0 var(--blue-d)}
+.car::before,.car::after{content:"";position:absolute;bottom:-9px;width:16px;height:16px;border-radius:50%;background:var(--ink)}
+.car::before{left:9px}.car::after{right:9px}
+.car.blank{background:var(--card)!important;color:var(--ink);border:3px dashed var(--muted);box-shadow:none}
+.car.blank.active{border-color:var(--sun-d);background:var(--sun-bg)!important;border-style:solid}
+.car.filled{background:var(--lily)!important;box-shadow:inset 0 -8px 0 var(--lily-d)!important}
+.tiles{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:20px}
+.tile{min-width:78px;height:70px;padding:0 10px;border:none;border-radius:18px;background:var(--sun);font-family:var(--display);font-weight:800;font-size:1.8rem;box-shadow:0 5px 0 var(--sun-d)}
+.tile:active{transform:translateY(3px);box-shadow:0 2px 0 var(--sun-d)}
+.tile[disabled]{visibility:hidden}
+
+/* ---------- Balloons ---------- */
+.sky{position:relative;height:min(56vh,480px);min-height:320px;border-radius:28px;overflow:hidden;touch-action:manipulation;background:linear-gradient(#bfe6ff,#effaff)}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.85}
+.balloon{position:absolute;left:0;top:0;width:76px;height:112px;border:none;background:none;padding:0;will-change:transform}
+.bal-in{width:76px;height:88px;border-radius:50% 50% 46% 46%/55% 55% 45% 45%;display:grid;place-items:center;position:relative;
+  font-family:var(--display);font-weight:800;font-size:1.8rem;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.18);
+  box-shadow:inset -10px -10px 0 rgba(0,0,0,.12),inset 8px 8px 0 rgba(255,255,255,.25)}
+.bal-in::after{content:"";position:absolute;bottom:-26px;left:50%;width:2px;height:26px;background:rgba(29,43,83,.45)}
+@keyframes popit{0%{transform:scale(1)}50%{transform:scale(1.35);opacity:.9}100%{transform:scale(.1);opacity:0}}
+.balloon.popped .bal-in{animation:popit .25s forwards}
+
+/* ---------- Test-style question card ---------- */
+.qcard{background:var(--paper);border-radius:22px;padding:20px 18px;display:grid;gap:14px;box-shadow:0 5px 0 var(--sky-2);min-width:0}
+.qhead{display:flex;gap:12px;align-items:flex-start}
+.qnum{flex:none;width:34px;height:34px;border-radius:5px;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.25rem}
+.qlead{margin:0;font-size:1.35rem;line-height:1.3;font-weight:800;min-width:0}
+.qlead b{font-family:var(--display);font-size:1.6em;color:var(--blue-d)}
+.qask{margin:0;font-size:1.3rem;line-height:1.3;font-weight:800}
+.qline{margin:0;font-family:var(--display);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.6;overflow-wrap:anywhere}
+.qline.center{text-align:center;font-size:2rem}
+.blank{display:inline-block;width:52px;border-bottom:3px solid var(--ink);vertical-align:baseline;height:1em}
+.qline.cmp{text-align:center;font-size:2.6rem}
+.qline.cmp .blank{width:58px;height:58px;border:3px solid var(--ink);border-radius:50%;vertical-align:middle;margin:0 6px}
+.ctable{border-collapse:collapse;font-family:var(--display);font-size:1.3rem;width:100%;max-width:380px;text-align:center}
+.ctable th,.ctable td{border:2px solid var(--ink);padding:6px 8px}
+.ctable th{font-size:1.05rem}
+.sq{display:inline-block;width:26px;height:26px;background:#b9bec8;border:2px solid #8a8f99;vertical-align:middle}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;border:3px solid var(--sky-2);background:var(--card);border-radius:16px;padding:12px 14px;
+  font-family:var(--display);font-weight:800;font-size:1.35rem;font-variant-numeric:tabular-nums;line-height:1.25;transition:background .15s,border-color .15s}
+.opt .ot{min-width:0;overflow-wrap:anywhere}
+.bub{flex:none;width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);background:var(--card)}
+.opt:hover{border-color:var(--water-d)}
+.opt.sel{border-color:var(--ink);background:var(--sun-bg)}
+.opt.sel .bub{background:var(--ink)}
+.opt.right{border-color:var(--lily);background:var(--lily-bg)}
+.opt.right .bub{background:var(--lily);border-color:var(--lily-d)}
+.opt.nope{opacity:.45;text-decoration:line-through}
+.opt[disabled]{cursor:default}
+.opts.big{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.opts.big .opt{width:auto;min-width:92px;min-height:80px;justify-content:center;font-size:2.2rem;padding:8px 18px}
+.opts.big .opt svg{width:60px;height:60px;display:block}
+.qfoot{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.pics{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center}
+.pic{width:62px;border:none;background:none;padding:2px;display:grid;justify-items:center;gap:2px;border-radius:12px}
+.pic svg{width:56px;height:56px}
+.pic .plabel{min-height:1.5em;font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--lily-d);font-variant-numeric:tabular-nums}
+.pic.tapped{background:var(--lily-bg)}
+.pichelp{margin:0;text-align:center;color:var(--muted);font-size:.95rem}
+.addrow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+.addrow .pics{max-width:100%}
+.plus{font-family:var(--display);font-size:2.6rem;font-weight:800;line-height:1}
+.art{display:block;margin:0 auto;max-width:100%}
+
+/* ---------- Place value blocks ---------- */
+.blocks{--u:9px;display:flex;align-items:flex-end;gap:calc(var(--u)*1.2);justify-content:center;flex-wrap:wrap;min-height:calc(var(--u)*10 + 8px);padding:4px}
+.blocks.sm{--u:5px}
+.flat{width:calc(var(--u)*10);height:calc(var(--u)*10);background-color:var(--sun);border:2px solid var(--sun-d);
+  background-image:linear-gradient(rgba(0,0,0,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.22) 1px,transparent 1px);background-size:var(--u) var(--u)}
+.rods{display:flex;gap:calc(var(--u)*.4)}
+.rod{width:var(--u);height:calc(var(--u)*10);background-color:var(--blue);border:1px solid var(--blue-d);
+  background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px);background-size:var(--u) var(--u)}
+.cubes{display:grid;grid-template-columns:repeat(3,var(--u));gap:calc(var(--u)*.35);align-content:end}
+.cube{width:var(--u);height:var(--u);background:var(--lily);border:1px solid var(--lily-d)}
+.noblocks{color:var(--muted);align-self:center}
+.cmpblocks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cmpblocks>div{background:var(--card);border-radius:14px;padding:6px;display:grid;justify-items:center;gap:2px;min-width:0}
+.cmpblocks b{font-family:var(--display);font-size:1.3rem}
+.pv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pvcol{background:var(--card);border-radius:14px;padding:8px 4px;text-align:center;display:grid;gap:4px;border-top:6px solid var(--c)}
+.pvcol .pvl{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--muted)}
+.pvcol .pvn{font-family:var(--display);font-size:2rem;line-height:1}
+.pvbtns{display:flex;gap:6px;justify-content:center}
+.pvbtns button{width:44px;height:44px;border-radius:12px;border:none;background:var(--sky);font-family:var(--display);font-size:1.6rem;font-weight:800;line-height:1}
+.built{margin:0;text-align:center;font-family:var(--display);font-size:1.3rem}
+
+/* ---------- Number line ---------- */
+.nl{width:100%;height:auto;display:block;touch-action:manipulation}
+.nl.tap{cursor:pointer}
+
+/* ---------- Ten frame, pairs, counters, ordering ---------- */
+.tf{display:grid;grid-template-columns:repeat(5,44px);border:3px solid var(--ink);width:max-content;margin:0 auto;background:var(--card)}
+.tf span{width:44px;height:44px;border:1.5px solid var(--ink);display:grid;place-items:center}
+.tf span.d1::after,.tf span.d2::after{content:"";width:30px;height:30px;border-radius:50%;background:var(--berry)}
+.tf span.d2::after{background:var(--sun)}
+.pairs{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.pairbtn{width:78px;height:78px;border-radius:50%;border:none;font-family:var(--display);font-weight:800;font-size:2.1rem;color:#fff;
+  box-shadow:inset -8px -8px 0 rgba(0,0,0,.12);transition:transform .12s}
+.pairbtn.sel{outline:5px solid var(--ink);transform:scale(1.08)}
+.pairbtn.gone{visibility:hidden}
+.ctrs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.ctr{width:54px;height:54px;border-radius:50%;border:3px solid rgba(0,0,0,.18);background:var(--berry);transition:background .15s}
+.ctr.y{background:var(--sun)}
+.eqbig{text-align:center;font-family:var(--display);font-size:2.3rem;margin:0;font-variant-numeric:tabular-nums}
+.eqbig .r{color:var(--berry-d)} .eqbig .y{color:var(--sun-d)}
+.found{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;min-height:2.2em}
+.found span{background:var(--lily-bg);color:var(--lily-d);border-radius:12px;padding:4px 12px;font-family:var(--display);font-weight:800;font-size:1.2rem}
+.slots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.slot{min-width:72px;height:62px;border:3px dashed var(--muted);border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.7rem;background:var(--card)}
+.slot.full{border-style:solid;border-color:var(--lily);background:var(--lily-bg)}
+.arrowtxt{text-align:center;margin:0;color:var(--muted);font-weight:800}
+
+/* ---------- Mock results ---------- */
+.score{display:flex;align-items:baseline;justify-content:center;gap:10px;font-family:var(--display)}
+.score .big{font-size:4rem;font-weight:800;line-height:1}
+.score span:last-child{font-size:1.4rem;color:var(--muted)}
+.scoremsg{text-align:center;font-size:1.2rem;margin:4px 0 16px}
+.res{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.res li{background:var(--card);border-radius:18px;padding:14px;border-left:8px solid var(--lily);display:grid;gap:6px}
+.res li.no{border-left-color:var(--berry)}
+.res .rhead{display:flex;gap:10px;align-items:center}
+.res .rmark{font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--lily-d)}
+.res li.no .rmark{color:var(--berry-d)}
+.res p{margin:0}
+.res .rctx{font-family:var(--display);font-size:1.15rem;color:var(--muted)}
+.res .why{color:var(--berry-d)}
+
+/* ---------- Hundreds chart ---------- */
+.chart{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;background:var(--card);padding:10px;border-radius:20px}
+.cell{border:none;border-radius:8px;background:var(--sky);height:38px;font-family:var(--display);font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;padding:0;min-width:0}
+.cell.alt{background:#eef8ff}
+.cell.here{background:var(--sun)!important;box-shadow:0 0 0 3px var(--sun-d)}
+.cell.ok{background:var(--lily)!important;color:#fff}
+.cell.no{background:var(--berry)!important;color:#fff}
+@keyframes peek{0%,100%{box-shadow:0 0 0 0 var(--lily)}50%{box-shadow:0 0 0 5px var(--lily)}}
+.cell.peek{animation:peek 1s 3}
+
+/* ---------- Progress ---------- */
+.skills{display:grid;gap:10px;margin-top:8px}
+.skill{background:var(--card);border-radius:18px;padding:14px;display:grid;gap:8px}
+.skill-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.skill-name{font-family:var(--display);font-size:1.2rem}
+.pill{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:3px 10px;background:var(--sky);color:var(--muted)}
+.pill.strong{background:var(--lily-bg);color:var(--lily-d)}
+.pill.mid{background:var(--sun-bg);color:#8a6400}
+.pill.weak{background:var(--berry-bg);color:var(--berry-d)}
+.meter{height:12px;border-radius:999px;background:var(--sky);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:999px;background:var(--lily)}
+.meter i.mid{background:var(--sun-d)}.meter i.weak{background:var(--berry)}
+.skill small{color:var(--muted);font-size:.9rem}
+.history{background:var(--card);border-radius:18px;padding:14px;margin-top:16px}
+.history ol{margin:6px 0 0;padding-left:1.2em;font-variant-numeric:tabular-nums}
+.tipbox{background:var(--sun-bg);border-radius:18px;padding:14px;margin-top:14px}
+.confirmrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.pg-h{font-size:1.25rem;margin:22px 0 0}
+
+/* ---------- Win ---------- */
+.overlay{position:fixed;inset:0;background:rgba(29,43,83,.45);display:grid;place-items:center;z-index:20;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.wincard{background:var(--card);border-radius:28px;padding:26px 22px;max-width:420px;width:100%;text-align:center;display:grid;gap:12px;box-shadow:0 8px 0 var(--sky-2)}
+.wincard h2{font-size:2.2rem;line-height:1}
+.bigstars{font-size:3.2rem;letter-spacing:6px;color:#cfd8e8}
+.bigstars b{color:var(--sun);font-weight:400;display:inline-block;animation:starin .4s backwards}
+.bigstars b:nth-child(2){animation-delay:.15s}.bigstars b:nth-child(3){animation-delay:.3s}
+@keyframes starin{from{transform:scale(0) rotate(-90deg)}}
+.winseq{font-family:var(--display);color:var(--lily-d);font-size:1.15rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.winbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.confetti{position:fixed;top:-20px;width:12px;height:16px;z-index:30;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:440px){
+  .cell{height:32px;font-size:.85rem;border-radius:6px}.chart{gap:3px;padding:6px}
+  .tf{grid-template-columns:repeat(5,40px)}.tf span{width:40px;height:40px}
+  .pvbtns button{width:38px;height:38px}
+  .qcard{padding:16px 12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .wobble,.frog.hop,.train.go,.bigstars b,.cell.peek{animation-duration:.01s}
+  .confetti{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <section id="home">
+    <header class="hero">
+      <svg viewBox="0 0 120 100" aria-hidden="true" id="heroFrog"></svg>
+      <div class="hero-text">
+        <h1>Hop &amp; Count</h1>
+        <p>Grade 1 math games: skip counting, numbers to 120, comparing numbers and adding to 10.</p>
+      </div>
+      <div class="startotal" title="Stars earned"><span class="st">★</span> <span id="totalStars">0</span></div>
+    </header>
+
+    <button class="daily" id="modeDaily" data-mode="daily">
+      <span class="glyph" aria-hidden="true">10</span>
+      <span><h2>Daily Mix</h2><p>10 questions from every topic. It picks more of the ones your child finds hard.</p></span>
+    </button>
+
+    <h2 class="sec-h">Test practice</h2>
+    <p class="sec-p">Questions that look like a school test, with bubbles to choose from. Pick a topic:</p>
+    <div class="chips" id="topicChips" role="group" aria-label="Test topic">
+      <button class="chip wide" data-topic="counting">Skip counting</button>
+      <button class="chip wide" data-topic="numbers">Numbers to 120</button>
+      <button class="chip wide" data-topic="compare">Compare &amp; order</button>
+      <button class="chip wide" data-topic="addition">Addition to 10</button>
+      <button class="chip wide" data-topic="all">Everything</button>
+    </div>
+    <div class="modes">
+      <button class="mode m-practice" id="modePractice" data-mode="practice">
+        <span class="tag">With hints</span>
+        <h3>Quick Practice</h3>
+        <p>10 questions. A wrong answer explains the mistake, then you try again.</p>
+        <span class="ms" data-stars="practice"></span>
+      </button>
+      <button class="mode m-mock" id="modeMock" data-mode="mock">
+        <span class="tag">No hints</span>
+        <h3>Mock Test</h3>
+        <p>9 questions like a real test. See the score and the answers at the end.</p>
+        <span class="mb" id="mockBest"></span>
+      </button>
+    </div>
+
+    <h2 class="sec-h">Counting &amp; skip counting <span class="badge" data-topicbadge="counting"></span></h2>
+    <div class="modes">
+      <button class="mode m-frog" id="modeFrog" data-mode="frog">
+        <svg class="ico" viewBox="0 0 120 100" aria-hidden="true" id="icoFrog"></svg>
+        <h3>Frog Hop</h3><p>Help the frog jump to the right lily pad.</p><span class="ms" data-stars="frog"></span>
+      </button>
+      <button class="mode m-train" id="modeTrain" data-mode="train">
+        <svg class="ico" viewBox="0 0 80 70" aria-hidden="true"><rect x="6" y="22" width="44" height="30" rx="6" fill="#ff5d73"/><rect x="40" y="8" width="28" height="44" rx="6" fill="#4f7cff"/><rect x="46" y="14" width="16" height="12" rx="3" fill="#fff"/><circle cx="18" cy="56" r="8" fill="#1d2b53"/><circle cx="54" cy="56" r="8" fill="#1d2b53"/></svg>
+        <h3>Number Train</h3><p>Fill in the missing numbers on the train.</p><span class="ms" data-stars="train"></span>
+      </button>
+      <button class="mode m-balloon" id="modeBalloon" data-mode="balloon">
+        <svg class="ico" viewBox="0 0 80 70" aria-hidden="true"><ellipse cx="28" cy="26" rx="16" ry="20" fill="#ff5d73"/><ellipse cx="54" cy="30" rx="15" ry="19" fill="#ffcf3f"/><path d="M28 46 L30 68 M54 49 L50 68" stroke="#1d2b53" stroke-width="2"/></svg>
+        <h3>Balloon Pop</h3><p>Pop the balloons in counting order.</p><span class="ms" data-stars="balloon"></span>
+      </button>
+      <button class="mode m-pics" id="modePics" data-mode="pics">
+        <svg class="ico" viewBox="0 0 60 60" aria-hidden="true" id="icoPics"></svg>
+        <h3>Count the Pictures</h3><p>Tap each hand, mitten pair or star and count on: 5, 10, 15…</p><span class="ms" data-stars="pics"></span>
+      </button>
+      <button class="mode m-tens" id="modeTens" data-mode="tens">
+        <span class="glyph" aria-hidden="true">+10</span>
+        <h3>10 More, 10 Less</h3><p>Use the 1 to 120 chart: 10 more is one row down.</p><span class="ms" data-stars="tens"></span>
+      </button>
+    </div>
+    <details class="panel" style="margin-top:14px">
+      <summary id="setSummary">Settings for Frog Hop, Number Train and Balloon Pop</summary>
+      <h3 class="label" id="stepLbl">Count by</h3>
+      <div class="chips" id="stepChips" role="group" aria-labelledby="stepLbl"></div>
+      <h3 class="label" id="dirLbl">Which way?</h3>
+      <div class="chips" id="dirChips" role="group" aria-labelledby="dirLbl">
+        <button class="chip wide" id="dirUp" data-dir="up">Count up ↑</button>
+        <button class="chip wide" id="dirDown" data-dir="down">Count down ↓</button>
+      </div>
+      <h3 class="label" id="fromLbl">Start at</h3>
+      <div class="chips" id="fromChips" role="group" aria-labelledby="fromLbl">
+        <button class="chip wide" id="fromZero" data-from="zero">0</button>
+        <button class="chip wide" id="fromAny" data-from="any">Any number (up to 120)</button>
+      </div>
+      <p class="preview" id="preview"></p>
+    </details>
+
+    <h2 class="sec-h">Numbers to 120 <span class="badge" data-topicbadge="numbers"></span></h2>
+    <div class="modes">
+      <button class="mode m-num" data-mode="blocks"><span class="glyph" aria-hidden="true">113</span><h3>Block Builder</h3><p>Build and read numbers with hundreds, tens and ones blocks.</p><span class="ms" data-stars="blocks"></span></button>
+      <button class="mode m-num" data-mode="expanded"><span class="glyph" aria-hidden="true">40 + 7</span><h3>Expanded Form</h3><p>Split numbers into parts: 115 = 100 + 10 + 5.</p><span class="ms" data-stars="expanded"></span></button>
+      <button class="mode m-num" data-mode="numline"><span class="glyph" aria-hidden="true">├┼┼┤</span><h3>Number Line</h3><p>Put numbers on a number line and read where the arrow points.</p><span class="ms" data-stars="numline"></span></button>
+    </div>
+
+    <h2 class="sec-h">Compare &amp; order <span class="badge" data-topicbadge="compare"></span></h2>
+    <div class="modes">
+      <button class="mode m-cmp" data-mode="gator"><span class="glyph" aria-hidden="true">91 &lt; 109</span><h3>Hungry Gator</h3><p>Greater than, less than or equal? The gator eats the bigger number.</p><span class="ms" data-stars="gator"></span></button>
+      <button class="mode m-cmp" data-mode="order"><span class="glyph" aria-hidden="true">9 · 19 · 91</span><h3>Greatest &amp; Least</h3><p>Find the biggest and smallest, and put numbers in order.</p><span class="ms" data-stars="order"></span></button>
+    </div>
+
+    <h2 class="sec-h">Addition to 10 <span class="badge" data-topicbadge="addition"></span></h2>
+    <div class="modes">
+      <button class="mode m-add" data-mode="make10"><span class="glyph" aria-hidden="true">7 + 3</span><h3>Make 10</h3><p>Ten frames and number pairs that make 10.</p><span class="ms" data-stars="make10"></span></button>
+      <button class="mode m-add" data-mode="add"><span class="glyph" aria-hidden="true">4 + 2 = ?</span><h3>Add It Up</h3><p>Add with pictures and stories, in any order.</p><span class="ms" data-stars="add"></span></button>
+      <button class="mode m-add" data-mode="ways"><span class="glyph" aria-hidden="true">6 = 4 + 2</span><h3>Ways to Make</h3><p>Flip counters to find different ways to make a number.</p><span class="ms" data-stars="ways"></span></button>
+    </div>
+
+    <h2 class="sec-h">Shapes</h2>
+    <div class="modes">
+      <button class="mode m-shape" data-mode="tiles"><span class="glyph" aria-hidden="true">▲▼▲</span><h3>Tile Patterns</h3><p>Find the tile that fills the gap with no spaces.</p><span class="ms" data-stars="tiles"></span></button>
+    </div>
+
+    <div class="grownup"><button class="btn" id="progressBtn">For grown-ups: see progress</button></div>
+  </section>
+
+  <section id="game" hidden>
+    <div class="bar">
+      <button class="btn" id="backBtn">← Home</button>
+      <h2 class="gtitle" id="gtitle"></h2>
+      <button class="btn" id="soundBtn" aria-pressed="true">Sound on</button>
+    </div>
+    <div class="trail" id="trail"></div>
+    <p class="ask" id="ask"></p>
+    <div id="stage"></div>
+    <p class="hint" id="hint" aria-live="polite"></p>
+  </section>
+
+  <section id="progress" hidden>
+    <div class="bar">
+      <button class="btn" id="progBack">← Home</button>
+      <h2 class="gtitle">Progress</h2>
+      <span style="width:90px"></span>
+    </div>
+    <div id="progBody"></div>
+  </section>
+</div>
+
+<div class="overlay" id="win" hidden>
+  <div class="wincard" role="dialog" aria-labelledby="winTitle">
+    <h2 id="winTitle">Great counting!</h2>
+    <div class="bigstars" id="winStars"></div>
+    <p id="winText" style="margin:0"></p>
+    <div class="winseq" id="winSeq"></div>
+    <div class="winbtns">
+      <button class="btn go" id="againBtn">Play again</button>
+      <button class="btn" id="nextBtn">Try the next number</button>
+      <button class="btn" id="homeBtn">Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+/* ================= art ================= */
+const FROG = '<ellipse cx="60" cy="68" rx="46" ry="28" fill="#46b04a"/><ellipse cx="60" cy="76" rx="30" ry="15" fill="#9be07a"/><circle cx="36" cy="34" r="16" fill="#46b04a"/><circle cx="84" cy="34" r="16" fill="#46b04a"/><circle cx="36" cy="32" r="10" fill="#fff"/><circle cx="84" cy="32" r="10" fill="#fff"/><circle cx="38" cy="33" r="5" fill="#1d2b53"/><circle cx="86" cy="33" r="5" fill="#1d2b53"/><path d="M42 60 Q60 74 78 60" stroke="#1d2b53" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="28" cy="58" r="5" fill="#ff9aa8" opacity=".8"/><circle cx="92" cy="58" r="5" fill="#ff9aa8" opacity=".8"/>';
+const FROG_SVG = '<svg viewBox="0 0 120 100" aria-hidden="true">' + FROG + '</svg>';
+const ENGINE = '<svg class="engine" viewBox="0 0 80 80" aria-hidden="true"><rect x="4" y="30" width="50" height="34" rx="6" fill="#46b04a"/><rect x="36" y="10" width="34" height="54" rx="6" fill="#2f8a3a"/><rect x="42" y="18" width="22" height="16" rx="3" fill="#fff"/><rect x="12" y="14" width="12" height="18" rx="2" fill="#1d2b53"/><circle cx="20" cy="70" r="9" fill="#1d2b53"/><circle cx="54" cy="70" r="9" fill="#1d2b53"/></svg>';
+const GATOR = '<svg class="art" viewBox="0 0 160 70" width="150" aria-hidden="true"><path d="M10 40 Q20 20 60 22 L150 4 L148 16 L70 36 Z" fill="#46b04a"/><path d="M10 44 Q24 64 64 56 L150 66 L146 54 L70 46 Z" fill="#2f8a3a"/><g fill="#fff"><path d="M80 33 l6 7 l4 -9z M100 28 l6 7 l4 -9z M120 23 l6 7 l4 -9z M84 48 l5 -7 l5 8z M104 52 l5 -7 l5 8z M124 56 l5 -7 l5 8z"/></g><circle cx="40" cy="26" r="9" fill="#fff"/><circle cx="43" cy="26" r="4.5" fill="#1d2b53"/></svg>';
+const svg60 = inner => `<svg viewBox="0 0 60 60" aria-hidden="true">${inner}</svg>`;
+const mitten = c => `<rect x="5" y="12" width="17" height="34" rx="8.5" fill="${c}"/><rect x="1" y="24" width="8" height="13" rx="4" fill="${c}"/><rect x="5" y="40" width="17" height="8" rx="2" fill="#1d2b53" opacity=".35"/>`;
+function starPath(cx, cy, R, r) { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r : R; d += (i ? 'L' : 'M') + (cx + rr * Math.cos(a)).toFixed(1) + ' ' + (cy + rr * Math.sin(a)).toFixed(1); } return d + 'Z'; }
+const ART = {
+  mitten: svg60(`<g>${mitten('#7aa6ff')}</g><g transform="translate(60,0) scale(-1,1)">${mitten('#7aa6ff')}</g>`),
+  bike: svg60('<circle cx="15" cy="40" r="11" fill="none" stroke="#1d2b53" stroke-width="4"/><circle cx="45" cy="40" r="11" fill="none" stroke="#1d2b53" stroke-width="4"/><path d="M15 40 L27 22 L45 40 M27 22 L40 22 M24 40 L27 22" stroke="#ff5d73" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="20" y="16" width="12" height="4" rx="2" fill="#1d2b53"/>'),
+  hand: svg60('<g fill="#f3c69c" stroke="#9b6b45" stroke-width="1.5"><rect x="15" y="6" width="7" height="30" rx="3.5"/><rect x="23" y="2" width="7" height="34" rx="3.5"/><rect x="31" y="4" width="7" height="32" rx="3.5"/><rect x="39" y="9" width="7" height="27" rx="3.5"/><rect x="4" y="26" width="7" height="22" rx="3.5" transform="rotate(-35 7 37)"/><rect x="13" y="26" width="34" height="30" rx="11"/></g>'),
+  star: svg60(`<path d="${starPath(30, 32, 27, 11)}" fill="#ffcf3f" stroke="#c98a00" stroke-width="2" stroke-linejoin="round"/>`),
+  coin: svg60('<circle cx="30" cy="30" r="24" fill="#f2c94c" stroke="#b8860b" stroke-width="3"/><circle cx="30" cy="30" r="18" fill="none" stroke="#b8860b" stroke-width="1.5"/><text x="30" y="37" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="19" fill="#7a5600">₹5</text>'),
+  note: svg60('<rect x="2" y="15" width="56" height="30" rx="4" fill="#d9a0c8" stroke="#8d4a7a" stroke-width="2"/><circle cx="18" cy="30" r="8" fill="none" stroke="#8d4a7a" stroke-width="2"/><text x="40" y="37" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="16" fill="#5d2350">₹10</text>'),
+  sticks: svg60('<g fill="#e3a857" stroke="#9b6b2f" stroke-width="1">' + Array.from({ length: 10 }, (_, i) => `<rect x="${9 + i * 4.3}" y="4" width="3.4" height="52" rx="1.5"/>`).join('') + '</g><rect x="6" y="26" width="48" height="8" rx="3" fill="#ff5d73"/>'),
+  apple: svg60('<circle cx="24" cy="36" r="17" fill="#ff5d73"/><circle cx="36" cy="36" r="17" fill="#ff5d73"/><path d="M30 20 Q31 10 37 6" stroke="#6b4a2a" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="12" rx="7" ry="4" fill="#46b04a" transform="rotate(-20 40 12)"/><ellipse cx="22" cy="30" rx="4" ry="6" fill="#fff" opacity=".45"/>'),
+  ball: svg60('<circle cx="30" cy="30" r="24" fill="#4f7cff"/><path d="M8 24 Q30 34 52 24 M8 38 Q30 46 52 38" stroke="#fff" stroke-width="4" fill="none"/>'),
+  fish: svg60('<path d="M42 30 L58 18 L58 42 Z" fill="#ff8a3d"/><ellipse cx="26" cy="30" rx="22" ry="14" fill="#ffb000"/><circle cx="14" cy="27" r="3.5" fill="#1d2b53"/><path d="M30 20 Q34 30 30 40" stroke="#ff8a3d" stroke-width="3" fill="none"/>'),
+};
+const OBJ = {
+  2: [{ art: 'mitten', many: 'pairs of mittens', each: 'Billy put the mittens in pairs.', unit: 'mittens' },
+      { art: 'bike', many: 'bikes', each: 'Each bike has 2 wheels.', unit: 'wheels' }],
+  5: [{ art: 'hand', many: 'hands', each: 'There are 5 fingers on each hand.', unit: 'fingers' },
+      { art: 'star', many: 'stars', each: 'Each star has 5 points.', unit: 'points' },
+      { art: 'coin', many: 'coins', each: 'Each coin is ₹5.', unit: 'rupees' }],
+  10: [{ art: 'note', many: 'notes', each: 'Each note is ₹10.', unit: 'rupees' },
+       { art: 'sticks', many: 'bundles', each: 'Each bundle has 10 sticks.', unit: 'sticks' }],
+};
+const ITEMS = [{ n: 'apples', art: 'apple' }, { n: 'balls', art: 'ball' }, { n: 'fish', art: 'fish' }, { n: 'stickers', art: 'star' }];
+const NAMES = ['Mia', 'Ravi', 'Sam', 'Anya', 'Leo', 'Zara', 'Kabir', 'Ella'];
+const WORD = { 1: 'ones', 2: 'twos', 3: 'threes', 4: 'fours', 5: 'fives', 10: 'tens' };
+const fixEach = s => s.replace('Billy put the mittens in pairs.', 'Each pair has 2 mittens.');
+
+/* ================= state ================= */
+const STEPS = [1, 2, 3, 4, 5, 10];
+const TITLES = { frog: 'Frog Hop', train: 'Number Train', balloon: 'Balloon Pop', practice: 'Quick Practice', mock: 'Mock Test', daily: 'Daily Mix',
+  pics: 'Count the Pictures', tens: '10 More, 10 Less', blocks: 'Block Builder', expanded: 'Expanded Form', numline: 'Number Line',
+  gator: 'Hungry Gator', order: 'Greatest & Least', make10: 'Make 10', add: 'Add It Up', ways: 'Ways to Make', tiles: 'Tile Patterns' };
+const STEP_GAMES = ['frog', 'train', 'balloon'];
+const BCOLORS = ['#ff5d73', '#4f7cff', '#ffb000', '#2fbf71', '#a660ff', '#ff8a3d'];
+const TOPIC_NAMES = { counting: 'Skip counting', numbers: 'Numbers to 120', compare: 'Compare & order', addition: 'Addition to 10', all: 'Everything' };
+const TOPIC_SKILLS = { counting: ['by1', 'by2', 'by5', 'by10', 'missing', 'pictures', 'tens'], numbers: ['build', 'words', 'expanded', 'numline'],
+  compare: ['compare', 'order'], addition: ['make10', 'add', 'ways'], shapes: ['shapes'] };
+
+const $ = s => document.querySelector(s);
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[rand(0, a.length - 1)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rand(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const join = a => a.join(', ');
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+let step = 2, dir = 'up', from = 'zero', topic = 'counting', mode = null, sound = true, mistakes = 0, misStreak = 0, curSeq = [];
+let best = {}, prog = {}, mockHist = [];
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || d; } catch (e) { return d; } };
+const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+best = load('hopcount-best', {}); prog = load('hopcount-skills', {}); mockHist = load('hopcount-mock', []);
+{ const p = load('hopcount-prefs', {}); if (STEPS.includes(p.step)) step = p.step; if (p.dir === 'down') dir = 'down'; if (p.from === 'any') from = 'any';
+  if (p.sound === false) sound = false; if (TOPIC_NAMES[p.topic]) topic = p.topic; }
+const savePrefs = () => store('hopcount-prefs', { step, dir, from, sound, topic });
+const key = m => STEP_GAMES.includes(m) ? `${m}-${step}-${dir}` : m === 'practice' ? `practice-${topic}` : m;
+
+function record(skill, ok) {
+  if (!skill) return;
+  const s = prog[skill] || (prog[skill] = { r: [], right: 0, tries: 0 });
+  s.r.push(ok ? 1 : 0); if (s.r.length > 10) s.r.shift();
+  s.tries++; if (ok) s.right++;
+  store('hopcount-skills', prog);
+}
+function missRate(skill) { const s = prog[skill]; if (!s || s.r.length < 3) return .5; return 1 - s.r.reduce((a, b) => a + b, 0) / s.r.length; }
+
+function makeSeq() {
+  let start = 0;
+  if (from === 'any') { const opts = []; for (let v = 0; v <= 120 - 10 * step; v += step) opts.push(v); start = pick(opts); }
+  const a = Array.from({ length: 11 }, (_, i) => start + i * step);
+  return dir === 'up' ? a : a.reverse();
+}
+const nextOf = v => dir === 'up' ? v + step : v - step;
+const sign = () => dir === 'up' ? '+' : '−';
+
+/* ================= sound + voice ================= */
+let ac;
+const actx = () => (ac = ac || new (window.AudioContext || window.webkitAudioContext)());
+function tone(notes) {
+  if (!sound) return;
+  try {
+    const c = actx(); let t = c.currentTime;
+    notes.forEach(([f, d, type, f2]) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g).connect(c.destination); o.start(t); o.stop(t + d + 0.03);
+      t += d * 0.8;
+    });
+  } catch (e) {}
+}
+/* A short crowd "yay": band-passed noise that swells and fades, with a flutter. */
+function crowd(dur = 1.1) {
+  if (!sound) return;
+  try {
+    const c = actx(), sr = c.sampleRate, len = Math.floor(sr * dur), buf = c.createBuffer(1, len, sr), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) { const t = i / sr; d[i] = (Math.random() * 2 - 1) * (0.65 + 0.35 * Math.sin(t * 2 * Math.PI * (7 + 3 * Math.sin(t * 3)))); }
+    const src = c.createBufferSource(); src.buffer = buf;
+    const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = .6;
+    const g = c.createGain(), t0 = c.currentTime;
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.32, t0 + 0.12); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(bp).connect(g).connect(c.destination); src.start(t0);
+  } catch (e) {}
+}
+const good = () => { tone([[784, .09], [988, .09], [1319, .22]]); crowd(); };
+const bad = () => tone([[440, .2, 'triangle', 420], [330, .34, 'triangle', 300]]);
+const tick = () => tone([[520, .06]]);
+const cheer = () => { tone([[523, .14], [659, .14], [784, .14], [1047, .3]]); crowd(1.8); };
+const PRAISE = ['Yay!', 'Great job!', 'Awesome!', 'You got it!', 'Super!', 'Well done!', 'Woohoo!', 'Fantastic!'];
+function say(text) {
+  if (!sound) return;
+  try {
+    speechSynthesis.cancel();
+    const t = String(text).replace(/₹(\d+)/g, '$1 rupees').replace(/−/g, ' minus ').replace(/ > /g, ' is greater than ').replace(/ < /g, ' is less than ').replace(/ = /g, ' equals ');
+    const u = new SpeechSynthesisUtterance(t); u.rate = .92; u.pitch = 1.1; speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function praise(extra) { good(); say(pick(PRAISE) + ' ' + (extra === undefined ? '' : extra)); }
+function oops(extra) { bad(); say('Oh! Try again. You can do better! ' + (extra || '')); }
+
+/* ================= helpers ================= */
+function distractors(c, avoid, n) {
+  const pool = [c + 1, c - 1, c + 2, c - 2, c + step, c - step, c + 10, c - 10]
+    .filter(x => x >= 0 && x <= 130 && x !== c && !avoid.includes(x));
+  return shuffle([...new Set(pool)]).slice(0, n);
+}
+function setHint(text, calm) { const h = $('#hint'); h.textContent = text || ''; h.classList.toggle('calm', !!calm); }
+const setAsk = t => $('#ask').textContent = t || '';
+function hintFor(prev) {
+  misStreak++;
+  if (misStreak >= 2) return `${prev} ${sign()} ${step} = ${nextOf(prev)}`;
+  return `You're counting by ${step}s. What is ${prev} ${sign()} ${step}?`;
+}
+function wobble(el) { if (!el) return; el.classList.remove('wobble'); void el.offsetWidth; el.classList.add('wobble'); }
+function renderTrail(s, known, cur) {
+  const t = $('#trail'); t.hidden = false; t.classList.remove('dots');
+  t.innerHTML = s.map((v, i) => `<span class="${i === cur ? 'now' : i < known ? 'done' : ''}">${i < known ? v : '?'}</span>`).join('');
+}
+function dotsTrail(n, cur, doneFn) {
+  const t = $('#trail'); t.hidden = false; t.classList.add('dots');
+  t.innerHTML = Array.from({ length: n }, (_, i) => `<span class="${doneFn ? (doneFn(i) ? 'done' : '') : i < cur ? 'done' : i === cur ? 'now' : ''}">${i + 1}</span>`).join('');
+}
+function picsHTML(art, n) {
+  return `<div class="pics">${Array.from({ length: n }, (_, i) => `<button class="pic" aria-label="Picture ${i + 1}">${ART[art]}<span class="plabel"></span></button>`).join('')}</div>`;
+}
+function wirePics(root, st, done) {
+  let count = 0; const all = root.querySelectorAll('.pic');
+  all.forEach(p => p.onclick = () => {
+    if (p.classList.contains('tapped')) return;
+    count++; p.classList.add('tapped'); p.querySelector('.plabel').textContent = count * st;
+    say(count * st); tone([[480 + count * 25, .07]]);
+    if (count === all.length && done) done();
+  });
+}
+const H = n => Math.floor(n / 100), T = n => Math.floor(n % 100 / 10), O = n => n % 10;
+function blocksHTML(n, cls = '') {
+  if (!n) return `<div class="blocks ${cls}"><span class="noblocks">No blocks yet</span></div>`;
+  return `<div class="blocks ${cls}" aria-label="${H(n)} hundreds, ${T(n)} tens, ${O(n)} ones">${'<span class="flat"></span>'.repeat(H(n))}` +
+    (T(n) ? `<span class="rods">${'<span class="rod"></span>'.repeat(T(n))}</span>` : '') +
+    (O(n) ? `<span class="cubes">${'<span class="cube"></span>'.repeat(O(n))}</span>` : '') + '</div>';
+}
+const ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+const TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+function numberWord(n) {
+  if (n < 20) return ONES[n];
+  if (n < 100) return TENS[T(n)] + (O(n) ? '-' + ONES[O(n)] : '');
+  return 'one hundred' + (n % 100 ? ' ' + numberWord(n % 100) : '');
+}
+const expanded = n => [H(n) * 100, T(n) * 10, O(n)].filter(x => x > 0).join(' + ');
+function dedupeOpts(ops) { const seen = new Set(); return ops.filter(o => !seen.has(o.t) && seen.add(o.t)); }
+
+/* ================= navigation ================= */
+let run = 0;
+const later = (fn, ms) => { const r = run; setTimeout(() => { if (r === run) fn(); }, ms); };
+function show(id) { ['home', 'game', 'progress'].forEach(s => $('#' + s).hidden = s !== id); window.scrollTo(0, 0); }
+function goHome() { run++; stopBalloons(); $('#win').hidden = true; show('home'); updateHome(); }
+
+function topicWeak(t) { return (TOPIC_SKILLS[t] || []).some(k => prog[k] && prog[k].r.length >= 3 && missRate(k) > .4); }
+function updateHome() {
+  document.querySelectorAll('[data-step]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.step === step));
+  document.querySelectorAll('[data-dir]').forEach(b => b.setAttribute('aria-pressed', b.dataset.dir === dir));
+  document.querySelectorAll('[data-from]').forEach(b => b.setAttribute('aria-pressed', b.dataset.from === from));
+  document.querySelectorAll('[data-topic]').forEach(b => b.setAttribute('aria-pressed', b.dataset.topic === topic));
+  $('#preview').textContent = (from === 'any' ? 'For example: ' : '') + makeSeq().slice(0, 6).join(', ') + ', …';
+  $('#setSummary').textContent = `Game settings: count ${dir} by ${step}s, start at ${from === 'any' ? 'any number' : '0'}`;
+  document.querySelectorAll('[data-stars]').forEach(el => {
+    const n = best[key(el.dataset.stars)] || 0;
+    el.innerHTML = '<b>★</b>'.repeat(n) + '★'.repeat(3 - n);
+    el.setAttribute('aria-label', `${n} of 3 stars`);
+  });
+  document.querySelectorAll('[data-topicbadge]').forEach(el => el.textContent = topicWeak(el.dataset.topicbadge) ? 'Needs practice' : '');
+  const top = mockHist.filter(h => (h.t || 'counting') === topic).reduce((m, h) => Math.max(m, h.s), -1);
+  $('#mockBest').textContent = `${TOPIC_NAMES[topic]}: ` + (top < 0 ? 'not taken yet' : `best score ${top} out of 9`);
+  $('#totalStars').textContent = Object.values(best).reduce((a, b) => a + b, 0);
+  $('#soundBtn').textContent = sound ? 'Sound on' : 'Sound off';
+  $('#soundBtn').setAttribute('aria-pressed', sound);
+}
+
+$('#stepChips').innerHTML = STEPS.map(n => `<button class="chip" id="step${n}" data-step="${n}" aria-label="Count by ${n}">${n}</button>`).join('');
+$('#heroFrog').innerHTML = FROG; $('#icoFrog').innerHTML = FROG;
+$('#icoPics').innerHTML = ART.hand.replace(/^<svg[^>]*>|<\/svg>$/g, '');
+$('#stepChips').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return; step = +b.dataset.step; savePrefs(); updateHome(); say(`Count by ${step}s`); });
+$('#dirChips').addEventListener('click', e => { const b = e.target.closest('[data-dir]'); if (!b) return; dir = b.dataset.dir; savePrefs(); updateHome(); });
+$('#fromChips').addEventListener('click', e => { const b = e.target.closest('[data-from]'); if (!b) return; from = b.dataset.from; savePrefs(); updateHome(); });
+$('#topicChips').addEventListener('click', e => { const b = e.target.closest('[data-topic]'); if (!b) return; topic = b.dataset.topic; savePrefs(); updateHome(); });
+$('#home').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (b) startMode(b.dataset.mode); });
+$('#backBtn').onclick = goHome; $('#homeBtn').onclick = goHome; $('#progBack').onclick = goHome;
+$('#againBtn').onclick = () => startMode(mode);
+$('#nextBtn').onclick = () => { const i = STEPS.indexOf(step); step = STEPS[(i + 1) % STEPS.length]; savePrefs(); updateHome(); startMode(mode); };
+$('#soundBtn').onclick = () => { sound = !sound; if (!sound) try { speechSynthesis.cancel(); } catch (e) {} savePrefs(); updateHome(); };
+$('#progressBtn').onclick = showProgress;
+
+function startMode(m) {
+  run++; stopBalloons();
+  mode = m; mistakes = 0; misStreak = 0; curSeq = makeSeq();
+  $('#win').hidden = true; show('game');
+  $('#gtitle').textContent = TITLES[m];
+  setHint(''); setAsk('');
+  const GAMES = {
+    frog: frogStart, train: trainStart, balloon: balloonStart, pics: picsStart, tens: tensStart,
+    practice: () => quizStart('practice', topic), mock: () => quizStart('mock', topic), daily: () => quizStart('practice', 'all'),
+    blocks: () => runGame(9, i => [buildRound, mcqRound(qBlocksRead), mcqRound(qWord)][i % 3]),
+    expanded: () => runGame(8, () => mcqRound(pick([qExpPick, qExpBlank, qExpRev]))),
+    numline: () => runGame(8, i => i % 2 ? mcqRound(pick([qNumlineRead, qBetween])) : placeRound),
+    gator: () => runGame(10, i => mcqRound(() => qCompare(i < 3), 1600)),
+    order: () => runGame(8, i => i % 2 ? orderRound : mcqRound(qGreatest)),
+    make10: () => runGame(9, i => [mcqRound(qFrame), mcqRound(qBond), pairsRound][i % 3]),
+    add: () => runGame(8, () => mcqRound(pick([qAddPic, qStory, qAddEq, qTurn]))),
+    ways: () => { const ns = shuffle([5, 6, 7, 8, 9, 10]); runGame(4, i => waysRound(ns[i])); },
+    tiles: () => runGame(6, () => mcqRound(qTile)),
+  };
+  GAMES[m]();
+}
+
+/* ================= Frog Hop ================= */
+let fi = 0;
+function frogStart() { fi = 0; say(`Count ${dir} by ${step}s. Start at ${curSeq[0]}`); frogRender(); }
+function frogRender() {
+  const s = curSeq, c = s[fi + 1];
+  renderTrail(s, fi + 1, fi);
+  setAsk(`Where does the frog hop next? Count ${dir} by ${step}s.`);
+  const opts = shuffle([c, ...distractors(c, [s[fi]], 2)]);
+  $('#stage').innerHTML = `<div class="pond"><div class="rock"><div class="frog" id="frog">${FROG_SVG}</div><span class="rocknum">${s[fi]}</span></div>
+    <div class="pads">${opts.map(v => `<button class="pad" data-v="${v}" aria-label="Hop to ${v}"><span>${v}</span></button>`).join('')}</div></div>`;
+  $('#stage').querySelectorAll('.pad').forEach(p => p.onclick = () => frogPick(p, +p.dataset.v));
+}
+function frogPick(btn, v) {
+  const s = curSeq;
+  if (v === s[fi + 1]) {
+    record('by' + step, misStreak === 0);
+    praise(v); misStreak = 0; setHint('');
+    btn.classList.add('right');
+    $('#stage').querySelectorAll('.pad').forEach(p => p.disabled = true);
+    $('#frog').classList.add('hop');
+    later(() => { fi++; if (fi === s.length - 1) { renderTrail(s, s.length, -1); win(); } else frogRender(); }, 900);
+  } else {
+    mistakes++; wobble(btn); btn.classList.add('nope');
+    const h = hintFor(s[fi]); setHint(h); oops(h);
+  }
+}
+
+/* ================= Number Train ================= */
+const TRAIN_ROUNDS = 5;
+let tr = { round: 0, win: [], blanks: [], fill: 0 };
+function trainStart() { tr.round = 0; say('Fill in the missing numbers'); trainNext(); }
+function trainNext() {
+  if (from === 'any' && tr.round > 0) curSeq = makeSeq();
+  const s = curSeq;
+  tr.round++;
+  const start = rand(0, s.length - 6);
+  tr.win = s.slice(start, start + 6);
+  tr.blanks = shuffle([2, 3, 4, 5]).slice(0, tr.round <= 2 ? 2 : 3).sort((a, b) => a - b);
+  tr.fill = 0; misStreak = 0; setHint('');
+  const answers = tr.blanks.map(p => tr.win[p]);
+  const tiles = shuffle([...answers, ...distractors(answers[0], answers, 2)]);
+  $('#trail').hidden = true;
+  setAsk(`Which numbers are missing? Train ${tr.round} of ${TRAIN_ROUNDS}`);
+  $('#stage').innerHTML = `<div class="track"><div class="train" id="train">${ENGINE}${tr.win.map((v, i) =>
+      tr.blanks.includes(i) ? `<div class="car blank" data-i="${i}">?</div>` : `<div class="car">${v}</div>`).join('')}</div></div>
+    <div class="tiles">${tiles.map((v, i) => `<button class="tile" id="tile${i}" data-v="${v}">${v}</button>`).join('')}</div>`;
+  markActive();
+  $('#stage').querySelectorAll('.tile').forEach(t => t.onclick = () => trainPick(t, +t.dataset.v));
+}
+function markActive() { $('#stage').querySelectorAll('.car.blank').forEach(c => c.classList.toggle('active', +c.dataset.i === tr.blanks[tr.fill])); }
+function trainPick(tile, v) {
+  const p = tr.blanks[tr.fill];
+  if (p === undefined) return;
+  const car = $(`.car[data-i="${p}"]`);
+  if (v === tr.win[p]) {
+    record('missing', misStreak === 0);
+    praise(v); misStreak = 0; setHint('');
+    car.textContent = v; car.classList.remove('blank', 'active'); car.classList.add('filled');
+    tile.disabled = true; tr.fill++; markActive();
+    if (tr.fill === tr.blanks.length) {
+      setHint(join(tr.win), true);
+      later(() => { $('#train').classList.add('go'); }, 500);
+      later(() => { tr.round < TRAIN_ROUNDS ? trainNext() : win(); }, 1500);
+    }
+  } else {
+    mistakes++; wobble(tile); wobble(car);
+    const h = hintFor(tr.win[p - 1]); setHint(h); oops(h);
+  }
+}
+
+/* ================= Balloon Pop ================= */
+let bl = { k: 0, list: [], raf: 0, last: 0, spawnT: 0, running: false, color: 0 };
+function balloonStart() {
+  bl.k = 0; bl.list = []; bl.spawnT = .2; bl.running = true; bl.last = performance.now();
+  $('#stage').innerHTML = `<div class="sky" id="sky">
+    <span class="cloud" style="left:8%;top:12%;width:90px;height:30px"></span>
+    <span class="cloud" style="right:10%;top:34%;width:120px;height:36px"></span>
+    <span class="cloud" style="left:30%;top:66%;width:80px;height:26px"></span></div>`;
+  say(`Pop the balloons. Count ${dir} by ${step}s`);
+  balloonAsk();
+  bl.raf = requestAnimationFrame(balloonLoop);
+}
+function balloonAsk() {
+  const s = curSeq;
+  renderTrail(s, bl.k, bl.k);
+  setAsk(bl.k === 0 ? `Pop ${s[0]} to start!` : `Pop the number that comes after ${s[bl.k - 1]}.`);
+}
+function spawnBalloon() {
+  const sky = $('#sky'); if (!sky) return;
+  const need = curSeq[bl.k];
+  const hasNeed = bl.list.some(b => b.v === need && !b.done);
+  let v;
+  if ((!hasNeed && Math.random() < .7) || Math.random() < .2) v = need;
+  else { const d = distractors(need, [need], 4); v = d.length ? pick(d) : need + 1; }
+  const w = sky.clientWidth, h = sky.clientHeight;
+  const el = document.createElement('button');
+  el.className = 'balloon'; el.setAttribute('aria-label', `Balloon ${v}`);
+  el.innerHTML = `<span class="bal-in" style="background:${BCOLORS[bl.color++ % BCOLORS.length]}">${v}</span>`;
+  const b = { el, v, x: rand(4, Math.max(4, w - 82)), y: h + 10, speed: h / (6.5 + Math.random() * 2.5), done: false };
+  el.addEventListener('pointerdown', e => { e.preventDefault(); popBalloon(b); });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); popBalloon(b); } });
+  sky.appendChild(el); bl.list.push(b);
+}
+function balloonLoop(t) {
+  if (!bl.running) return;
+  const dt = Math.min(.05, (t - bl.last) / 1000); bl.last = t;
+  bl.spawnT -= dt;
+  if (bl.spawnT <= 0) { spawnBalloon(); bl.spawnT = 1.05; }
+  bl.list = bl.list.filter(b => {
+    if (b.done) return true;
+    b.y -= b.speed * dt;
+    b.el.style.transform = `translate(${b.x}px,${b.y}px)`;
+    if (b.y < -120) { b.el.remove(); return false; }
+    return true;
+  });
+  bl.raf = requestAnimationFrame(balloonLoop);
+}
+function popBalloon(b) {
+  if (b.done || !bl.running) return;
+  const s = curSeq, need = s[bl.k];
+  if (b.v === need) {
+    record('by' + step, misStreak === 0);
+    praise(b.v); misStreak = 0; setHint('');
+    b.done = true; b.el.classList.add('popped');
+    setTimeout(() => { b.el.remove(); bl.list = bl.list.filter(x => x !== b); }, 260);
+    bl.k++;
+    if (bl.k === s.length) { renderTrail(s, s.length, -1); stopBalloons(); later(win, 300); }
+    else balloonAsk();
+  } else {
+    mistakes++; wobble(b.el.firstChild);
+    const h = bl.k === 0 ? `Start at ${s[0]}. Find the balloon with ${s[0]}.` : hintFor(s[bl.k - 1]);
+    setHint(h); oops(h);
+  }
+}
+function stopBalloons() { bl.running = false; cancelAnimationFrame(bl.raf); }
+
+/* ================= Question generators: skip counting ================= */
+const opt = (t, ok, why, html) => ({ t: String(t), ok, why: why || '', html });
+const sortNum = ops => ops.slice().sort((a, b) => +a.t - +b.t);
+
+function qCount1(d) {
+  if (d === 'up') {
+    const n = rand(94, 113), given = [n, n + 1, n + 2], ans = [n + 3, n + 4, n + 5, n + 6];
+    const ops = [opt(join(ans), true),
+      opt(join(ans.map(x => x + 10)), false, `Those numbers jumped ahead by 10. Count on by 1: after ${n + 2} comes ${n + 3}.`),
+      n + 3 > 100 ? opt('1, 2, 3, 4', false, `After 100 we keep going: 101, 102, 103. We don't start again at 1.`)
+                  : opt(join([n + 1, n, n - 1, n - 2]), false, 'Count forward means the numbers get bigger.')];
+    return { skill: 'by1', lead: 'Count forward.', line: [...given, '_', '_', '_', '_'], ask: 'What numbers come next?', options: shuffle(ops), explain: `${join(given)}, ${join(ans)}. Each number is 1 more.` };
+  }
+  const n = rand(30, 115), given = [n, n - 1, n - 2], ans = [n - 3, n - 4, n - 5, n - 6];
+  const ops = [opt(join(ans), true),
+    opt(join([n - 1, n, n + 1, n + 2]), false, 'Count backward means the numbers get smaller each time.'),
+    opt(join(ans.map(x => x - 2)), false, `You skipped some numbers. Right after ${n - 2} comes ${n - 3}.`)];
+  return { skill: 'by1', lead: 'Count backward.', line: [...given, '_', '_', '_', '_'], ask: 'What numbers come next?', options: shuffle(ops), explain: `${join(given)}, ${join(ans)}. Each number is 1 less.` };
+}
+function qWhich(st) {
+  const o = pick(OBJ[st]), N = st === 10 ? rand(4, 9) : st === 5 ? rand(5, 9) : rand(4, 7);
+  const right = Array.from({ length: N }, (_, i) => (i + 1) * st);
+  const ones = Array.from({ length: N }, (_, i) => i + 1);
+  const ops = [opt(join(right), true), opt(join(ones), false, `That counts each picture as 1. ${fixEach(o.each)} So count ${st}, ${2 * st}, ${3 * st}…`)];
+  if (Math.random() < .5) ops.push(opt(join([...right, (N + 1) * st, (N + 2) * st]), false, `That count is too long. There are only ${N} ${o.many}, so stop at ${N * st}.`));
+  else { const ot = st === 10 ? 5 : 10; ops.push(opt(join(Array.from({ length: N }, (_, i) => (i + 1) * ot)), false, `That counts by ${WORD[ot]}. Here we count by ${WORD[st]}: ${st}, ${2 * st}, ${3 * st}…`)); }
+  return { skill: 'by' + st, lead: o.each, pic: { art: o.art, n: N, st }, ask: `Which shows how to count the ${o.unit} by ${WORD[st]}?`, options: shuffle(ops), explain: `One jump of ${st} for each picture: ${join(right)}.` };
+}
+function qAfter(st, forceAfter) {
+  const before = !forceAfter && Math.random() < .3;
+  const mult = []; for (let v = st; v <= 120 - st; v += st) mult.push(v);
+  if (!before) {
+    const n = pick(mult.filter(v => v + 2 * st <= 130));
+    return { skill: 'by' + st, ask: `What number comes after ${n} when skip counting by ${WORD[st]}?`, options: sortNum([
+      opt(n + st, true), opt(n + 1, false, `${n + 1} is counting by 1. Counting by ${WORD[st]}, jump ${st}: ${n} to ${n + st}.`),
+      opt(n + 2 * st, false, `That is two jumps. One jump of ${st} from ${n} is ${n + st}.`)]), explain: `${n} + ${st} = ${n + st}` };
+  }
+  const n = pick(mult.filter(v => v - 2 * st >= 0));
+  return { skill: 'by' + st, ask: `What number comes before ${n} when skip counting by ${WORD[st]}?`, options: sortNum([
+    opt(n - st, true), opt(n - 1, false, `${n - 1} is counting back by 1. Counting by ${WORD[st]}, jump back ${st}: ${n} to ${n - st}.`),
+    opt(n - 2 * st, false, `That is two jumps back. One jump of ${st} before ${n} is ${n - st}.`)]), explain: `${n} − ${st} = ${n - st}` };
+}
+function qMissing(st) {
+  const down = Math.random() < .25, mult = [];
+  for (let v = 0; v <= 120 - 4 * st; v += st) mult.push(v);
+  const base = pick(mult); const s = Array.from({ length: 5 }, (_, i) => base + i * st); if (down) s.reverse();
+  const d = down ? -1 : 1, a = s[1];
+  const ops = [opt(join([s[2], s[3]]), true),
+    opt(join([a + d, a + 2 * d]), false, `Those count by 1s. This pattern counts by ${WORD[st]}: ${s[1]}, ${s[2]}, ${s[3]}.`),
+    opt(join([s[3], s[4] + d * st]), false, `Check the last number. The missing numbers have to fit between ${s[1]} and ${s[4]}.`)];
+  return { skill: 'missing', lead: `Count by ${WORD[st]}${down ? ' backward' : ''}.`, line: [s[0], s[1], '_', '_', s[4]], ask: 'What numbers are missing?', options: shuffle(ops), explain: join(s) };
+}
+function qPicTotal(st) {
+  const o = pick(OBJ[st]), N = st === 5 ? rand(6, 14) : st === 2 ? rand(6, 12) : rand(4, 11), total = N * st;
+  const each = fixEach(o.each), near = Math.random() < .5 ? total - st : total + st;
+  return { skill: 'pictures', lead: each, pic: { art: o.art, n: N, st }, ask: `How many ${o.unit} in all? Skip count by ${WORD[st]}.`,
+    options: sortNum([opt(total, true),
+      opt(N, false, `${N} is how many ${o.many} there are. ${each} So count ${st}, ${2 * st}, ${3 * st}… one number for each picture.`),
+      opt(near, false, 'Almost! Count every picture exactly once. Tap each picture as you count.')]),
+    explain: `${N} ${o.many}: ${st}, ${2 * st}, ${3 * st} … ${total}.` };
+}
+function qTensChart() {
+  const n = rand(15, 110);
+  const mixed = Math.random() < .5 ? opt(`${n - 10} and ${n + 1}`, false, `${n - 10} is right, but ${n + 1} is only 1 more. 10 more than ${n} is ${n + 10}.`)
+                                   : opt(`${n - 1} and ${n + 10}`, false, `${n + 10} is right, but ${n - 1} is only 1 less. 10 less than ${n} is ${n - 10}.`);
+  return { skill: 'tens', lead: 'Look at the chart.', table: n, ask: 'What are the missing numbers?', options: shuffle([
+    opt(`${n - 10} and ${n + 10}`, true),
+    opt(`${n - 1} and ${n + 1}`, false, `${n - 1} and ${n + 1} are 1 less and 1 more. 10 less and 10 more change the tens: ${n - 10} and ${n + 10}.`), mixed]),
+    explain: `10 less than ${n} is ${n - 10}. 10 more than ${n} is ${n + 10}.` };
+}
+function qTenLM() {
+  if (Math.random() < .55) { const n = rand(20, 119); return { skill: 'tens', ask: `What number is 10 less than ${n}?`, options: sortNum([
+    opt(n - 10, true), opt(n - 1, false, `${n - 1} is 1 less. 10 less than ${n} is ${n - 10}.`),
+    opt(n + 1, false, `${n + 1} is bigger than ${n}. 10 less means a smaller number: ${n - 10}.`)]), explain: `${n} − 10 = ${n - 10}` }; }
+  const n = rand(10, 110); return { skill: 'tens', ask: `What number is 10 more than ${n}?`, options: sortNum([
+    opt(n + 10, true), opt(n + 1, false, `${n + 1} is 1 more. 10 more than ${n} is ${n + 10}.`),
+    opt(n - 1, false, `${n - 1} is smaller than ${n}. 10 more means a bigger number: ${n + 10}.`)]), explain: `${n} + 10 = ${n + 10}` };
+}
+
+/* ================= Question generators: numbers to 120 ================= */
+const pickN = () => Math.random() < .5 ? rand(101, 120) : rand(11, 99);
+function qBlocksRead() {
+  const n = pickN(), sw = H(n) * 100 + O(n) * 10 + T(n);
+  const ops = [opt(n, true)];
+  if (T(n) !== O(n) && O(n) > 0) ops.push(opt(sw, false, `Count the tens rods first. ${T(n)} tens is ${T(n) * 10}, then ${O(n)} ones: ${n}.`));
+  else ops.push(opt(n + 1, false, `Count the little cubes again. There ${O(n) === 1 ? 'is 1 one' : `are ${O(n)} ones`}.`));
+  ops.push(Math.random() < .5 || T(n) < 2 ? opt(n + 10, false, `Count the rods again. There are ${T(n)} tens rods.`) : opt(n - 10, false, `Count the rods again. There are ${T(n)} tens rods.`));
+  return { skill: 'build', blocks: n, ask: 'What number do the blocks show?', options: sortNum(dedupeOpts(ops)),
+    explain: `${H(n) ? '1 hundred, ' : ''}${T(n)} tens and ${O(n)} ones make ${n}.` };
+}
+function qWord() {
+  const n = pickN();
+  if (Math.random() < .55) {
+    const ops = [opt(n, true)];
+    if (n > 100) ops.push(opt('100' + (n - 100), false, `"One hundred" is just the 1 at the front. ${numberWord(n)} is written ${n}.`));
+    else ops.push(opt(`${T(n)}0${O(n)}`, false, `${numberWord(n)} is ${T(n)} tens and ${O(n)} ones: ${n}. We don't write ${T(n)}0${O(n)}.`));
+    const sw = H(n) * 100 + O(n) * 10 + T(n);
+    ops.push(sw !== n ? opt(sw, false, `Listen to the tens: ${numberWord(n)} has ${T(n)} tens, so it is ${n}.`) : opt(n + 10, false, `Look at the tens again: ${numberWord(n)} is ${n}.`));
+    return { skill: 'words', lead: `Which number is "${numberWord(n)}"?`, ask: 'Choose the number.', options: shuffle(dedupeOpts(ops)), explain: `"${numberWord(n)}" is ${n}.` };
+  }
+  const sw = H(n) * 100 + O(n) * 10 + T(n), alt = sw !== n && sw <= 199 ? sw : n + 10, alt2 = n + (O(n) < 9 ? 1 : -1);
+  return { skill: 'words', lead: `How do you say ${n}?`, ask: 'Choose the words.', options: shuffle(dedupeOpts([opt(numberWord(n), true),
+    opt(numberWord(alt), false, `That is ${alt}. Look at the tens digit in ${n}: it is ${T(n)}.`),
+    opt(numberWord(alt2), false, `That is ${alt2}. Look at the ones digit in ${n}: it is ${O(n)}.`)])), explain: `${n} is "${numberWord(n)}".` };
+}
+function qExpPick() {
+  const n = Math.random() < .5 ? rand(101, 119) : rand(21, 99) - (Math.random() < .3 ? 0 : 0);
+  const nn = O(n) === 0 ? n + 1 : n;
+  const digits = [H(nn), T(nn), O(nn)].filter(x => x > 0).join(' + ');
+  const ops = [opt(expanded(nn), true), opt(digits, false, `Each digit has a value. In ${nn}, the ${T(nn)} is in the tens place, so it means ${T(nn) * 10}.`)];
+  if (nn > 100) ops.push(opt(`100 + ${T(nn)} + ${O(nn)}`, false, `The middle digit is in the tens place. ${T(nn)} ten${T(nn) === 1 ? '' : 's'} is ${T(nn) * 10}, not ${T(nn)}.`));
+  else if (T(nn) !== O(nn)) ops.push(opt(`${O(nn) * 10} + ${T(nn)}`, false, `The ${T(nn)} is in the tens place, so it is ${T(nn) * 10}. The ${O(nn)} is in the ones place.`));
+  else ops.push(opt(`${T(nn) * 10} + ${O(nn) * 10}`, false, `The second ${O(nn)} is in the ones place, so it is just ${O(nn)}.`));
+  return { skill: 'expanded', blocks: nn, lead: `Which is the expanded form of ${nn}?`, ask: 'Choose one.', options: shuffle(dedupeOpts(ops)), explain: `${nn} = ${expanded(nn)}` };
+}
+function qExpBlank() {
+  if (Math.random() < .5) {
+    let n = rand(21, 99); if (O(n) === 0) n++;
+    return { skill: 'expanded', lead: 'Fill in the blank.', line: [n, '=', '_', '+', O(n)], sep: ' ', lineClass: 'center', ask: 'What number goes in the blank?',
+      options: sortNum([opt(T(n) * 10, true), opt(T(n), false, `The ${T(n)} in ${n} is in the tens place, so it is worth ${T(n) * 10}.`),
+        opt(n, false, `${n} + ${O(n)} would be too much. ${n} = ${T(n) * 10} + ${O(n)}.`)]), explain: `${n} = ${T(n) * 10} + ${O(n)}` };
+  }
+  let n = rand(111, 119);
+  return { skill: 'expanded', lead: 'Fill in the blank.', line: [n, '=', 100, '+', '_', '+', O(n)], sep: ' ', lineClass: 'center', ask: 'What number goes in the blank?',
+    options: sortNum([opt(10, true), opt(1, false, `The middle 1 in ${n} is in the tens place, so it means 10.`),
+      opt(10 + O(n), false, `The ${O(n)} ones are already there. The blank is only the tens: 10.`)]), explain: `${n} = 100 + 10 + ${O(n)}` };
+}
+function qExpRev() {
+  let n = pickN(); if (O(n) === 0) n++;
+  const sw = H(n) * 100 + O(n) * 10 + T(n);
+  const ops = [opt(n, true), opt(n + 10, false, `Add the parts carefully: ${expanded(n)} = ${n}.`)];
+  ops.push(sw !== n ? opt(sw, false, `${T(n) * 10} means ${T(n)} tens, so the tens digit is ${T(n)}. The answer is ${n}.`) : opt(n - 1, false, `Count the ones again: ${expanded(n)} = ${n}.`));
+  return { skill: 'expanded', lead: `${expanded(n)} = ?`, ask: 'What number is this?', options: sortNum(dedupeOpts(ops)), explain: `${expanded(n)} = ${n}` };
+}
+const LINES = [{ a: 0, b: 20, step: 1 }, { a: 100, b: 120, step: 1 }, { a: 90, b: 110, step: 1 }, { a: 0, b: 100, step: 10 }];
+function lineSVG(c, o = {}) {
+  const X = v => 30 + (v - c.a) / (c.b - c.a) * 580;
+  let s = `<svg class="nl${o.tap ? ' tap' : ''}" viewBox="0 0 640 120" role="img" aria-label="Number line from ${c.a} to ${c.b}"><line x1="16" y1="70" x2="624" y2="70" stroke="#1d2b53" stroke-width="3"/><path d="M8 70 L20 63 L20 77Z M632 70 L620 63 L620 77Z" fill="#1d2b53"/>`;
+  for (let v = c.a; v <= c.b; v += c.step) {
+    const big = c.step === 10 || v % 5 === 0;
+    s += `<line x1="${X(v)}" y1="${big ? 56 : 62}" x2="${X(v)}" y2="${big ? 84 : 78}" stroke="#1d2b53" stroke-width="${big ? 3 : 2}"/>`;
+    if (big) s += `<text x="${X(v)}" y="108" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="20" font-weight="800" fill="#1d2b53">${v}</text>`;
+  }
+  if (o.arrow != null) s += `<path d="M${X(o.arrow) - 11} 18 L${X(o.arrow) + 11} 18 L${X(o.arrow)} 44Z" fill="#ff5d73"/>`;
+  if (o.mark != null) s += `<circle cx="${X(o.mark)}" cy="70" r="10" fill="${o.markColor || '#ff5d73'}" stroke="#fff" stroke-width="2"/><text x="${X(o.mark)}" y="40" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="22" font-weight="800" fill="${o.markColor || '#ff5d73'}">${o.mark}</text>`;
+  if (o.tap) s += '<rect x="0" y="0" width="640" height="120" fill="transparent"/>';
+  return s + '</svg>';
+}
+function qNumlineRead() {
+  const c = pick(LINES.slice(0, 3)); let n; do n = rand(c.a + 1, c.b - 1); while (n % 5 === 0);
+  const L = n - n % 5, up = Array.from({ length: n - L }, (_, i) => L + i + 1);
+  return { skill: 'numline', svg: lineSVG(c, { arrow: n }), ask: 'What number is the arrow pointing to?', options: sortNum([opt(n, true),
+    opt(n + 1, false, `Start at ${L} and count each tick: ${join(up)}.`), opt(n - 1, false, `Start at ${L} and count each tick: ${join(up)}.`)]),
+    explain: `Start at ${L} and count on: ${join(up)}.` };
+}
+function qBetween() {
+  const n = rand(12, 119);
+  return { skill: 'numline', svg: lineSVG({ a: n - n % 10 - (n % 10 < 2 ? 5 : 0), b: n - n % 10 - (n % 10 < 2 ? 5 : 0) + 15, step: 1 }), ask: `Which number comes between ${n - 1} and ${n + 1}?`,
+    options: sortNum([opt(n, true), opt(n + 2, false, `${n + 2} comes after ${n + 1}. Between means in the middle: ${n - 1}, ${n}, ${n + 1}.`),
+      opt(n - 2, false, `${n - 2} comes before ${n - 1}. Between means in the middle: ${n - 1}, ${n}, ${n + 1}.`)]), explain: `${n - 1}, ${n}, ${n + 1}` };
+}
+
+/* ================= Question generators: compare & order ================= */
+function cmpPair() {
+  const r = Math.random();
+  if (r < .08) { const n = rand(10, 120); return [n, n]; }
+  if (r < .3) { const t = rand(1, 9); let o = rand(1, 9); if (t === o) o = o % 9 + 1; return shuffle([t * 10 + o, o * 10 + t]); }
+  if (r < .5) return shuffle([rand(100, 120), rand(80, 99)]);
+  if (r < .65) { const t = rand(0, 2), o = rand(0, 2); return t === o ? shuffle([100 + t * 10 + o, 100 + ((t + 1) % 3) * 10 + o]) : shuffle([100 + t * 10 + o, 100 + o * 10 + t]); }
+  const a = rand(1, 120); let b = rand(Math.max(1, a - 15), Math.min(120, a + 15)); if (b === a) b = a < 120 ? a + 1 : a - 1; return [a, b];
+}
+function placeReason(big, small) {
+  if (H(big) !== H(small)) return `${big} has 1 hundred and ${small} has no hundreds.`;
+  if (T(big) !== T(small)) return `${H(big) ? 'Same hundreds, so look at the tens' : 'Look at the tens first'}: ${big} has ${T(big)} tens and ${small} has ${T(small)}.`;
+  return `Same tens, so look at the ones: ${big} has ${O(big)} ones and ${small} has ${O(small)}.`;
+}
+const SYMWORD = { '>': 'greater than', '<': 'less than', '=': 'equal to' };
+function qCompare(withBlocks) {
+  const [a, b] = cmpPair(), sym = a > b ? '>' : a < b ? '<' : '=', big = Math.max(a, b), small = Math.min(a, b);
+  const why = s => {
+    if (sym === '=') return `Look closely: both numbers are ${a}. They are equal, so use =.`;
+    if (s === '=') return `They are not equal. ${placeReason(big, small)}`;
+    return `${placeReason(big, small)} The gator's mouth opens toward the bigger number: ${a} ${sym} ${b}.`;
+  };
+  return { skill: 'compare', svg: GATOR, lead: 'The gator\'s mouth opens toward the bigger number.', line: [a, '_', b], sep: ' ', lineClass: 'cmp',
+    blocksPair: withBlocks ? [a, b] : null, ask: 'Which sign goes in the circle?', big: true,
+    options: ['>', '<', '='].map(s => opt(s, s === sym, why(s))), explain: `${a} ${sym} ${b}. ${a} is ${SYMWORD[sym]} ${b}.` };
+}
+function threeNums(k = 3) {
+  const set = new Set(cmpPair()); while (set.size < k) set.add(rand(10, 120)); return shuffle([...set]).slice(0, k);
+}
+function qGreatest() {
+  const nums = threeNums(3), most = Math.random() < .5, ans = most ? Math.max(...nums) : Math.min(...nums), word = most ? 'greatest' : 'least';
+  return { skill: 'order', lead: `Which number is the ${word}?`, ask: most ? 'Find the biggest number.' : 'Find the smallest number.', big: true,
+    options: nums.map(n => opt(n, n === ans, n === ans ? '' : `${n} is not the ${word}. ${most ? placeReason(ans, n) : placeReason(n, ans)}`)), explain: `${ans} is the ${word}.` };
+}
+function qOrderPick() {
+  const nums = threeNums(3), sorted = [...nums].sort((a, b) => a - b), right = join(sorted), ops = [opt(right, true)];
+  let guard = 0;
+  while (ops.length < 3 && guard++ < 30) {
+    const p = shuffle(nums), t = join(p);
+    if (ops.some(o => o.t === t)) continue;
+    let i = 0; while (p[i] < p[i + 1]) i++;
+    ops.push(opt(t, false, `${p[i]} comes before ${p[i + 1]}, but ${p[i]} is bigger. From least to greatest, every number must be bigger than the one before.`));
+  }
+  return { skill: 'order', lead: `Put ${join(nums)} in order.`, ask: 'Which shows the numbers from least to greatest?', options: shuffle(ops), explain: right };
+}
+
+/* ================= Question generators: addition ================= */
+function tfHTML(k, k2 = 0) { return `<div class="tf" aria-label="Ten frame with ${k}${k2 ? ' and ' + k2 : ''} dots">${Array.from({ length: 10 }, (_, i) => `<span class="${i < k ? 'd1' : i < k + k2 ? 'd2' : ''}"></span>`).join('')}</div>`; }
+function qFrame() {
+  const k = rand(1, 9), need = 10 - k, third = need === k ? need + 1 : (need + 1 === k ? need - 1 : need + 1);
+  return { skill: 'make10', svg: tfHTML(k), lead: `There are ${k} dots.`, ask: 'How many more dots make 10?', big: true,
+    options: sortNum(dedupeOpts([opt(need, true), opt(k, false, `${k} is how many dots there are now. Count the empty boxes: ${need}.`),
+      opt(third, false, `Count the empty boxes again. ${k} and ${need} make 10.`)])), explain: `${k} + ${need} = 10` };
+}
+function qBond() {
+  const k = rand(1, 9), need = 10 - k;
+  return { skill: 'make10', lead: `${k} and what make 10?`, line: [k, '+', '_', '=', 10], sep: ' ', lineClass: 'center', ask: 'What number goes in the blank?', big: true,
+    options: sortNum(dedupeOpts([opt(need, true), opt(need + 1, false, `${k} + ${need + 1} = ${k + need + 1}. That is more than 10. Try one less.`),
+      opt(Math.max(0, need - 1) === need ? need + 2 : need - 1, false, `${k} + ${need - 1} = ${k + need - 1}. That is not 10 yet. Try one more.`)])), explain: `${k} + ${need} = 10` };
+}
+function addPair() { const a = rand(1, 7), b = rand(1, 10 - a); return [a, b]; }
+const countOn = (a, b) => Array.from({ length: b }, (_, i) => a + i + 1).join(', ');
+function qAddPic() {
+  const [a, b] = addPair(), it = pick(ITEMS), s = a + b;
+  return { skill: 'add', pic: { art: it.art, n: a, n2: b, st: 1 }, lead: `${a} ${it.n} and ${b} more ${it.n}.`, ask: `How many ${it.n} in all?`, big: true,
+    options: sortNum(dedupeOpts([opt(s, true), opt(s + 1, false, `Count them again, one at a time. Start at ${a} and count on ${b}: ${countOn(a, b)}.`),
+      opt(s - 1 > 0 ? s - 1 : s + 2, false, `Count them again, one at a time. Start at ${a} and count on ${b}: ${countOn(a, b)}.`)])), explain: `${a} + ${b} = ${s}` };
+}
+function qStory() {
+  const [a, b] = addPair(), it = pick(ITEMS), nm = pick(NAMES), s = a + b;
+  return { skill: 'add', pic: { art: it.art, n: a, n2: b, st: 1 }, lead: `${nm} has ${a} ${it.n}. ${nm} gets ${b} more.`, ask: `How many ${it.n} does ${nm} have now?`, big: true,
+    options: sortNum(dedupeOpts([opt(s, true), opt(b, false, `${b} is only the new ones. Add them to the ${a} from the start: ${a} + ${b}.`),
+      opt(s + 1, false, `Start at ${a} and count on ${b}: ${countOn(a, b)}.`)])), explain: `${a} + ${b} = ${s}` };
+}
+function qAddEq() {
+  const [a, b] = addPair(), s = a + b;
+  return { skill: 'add', svg: tfHTML(a, b), line: [a, '+', b, '=', '_'], sep: ' ', lineClass: 'center', ask: 'What is the answer?', big: true,
+    options: sortNum(dedupeOpts([opt(s, true), opt(s + 1, false, `Count all the dots: ${a} red and ${b} yellow. Start at ${a}: ${countOn(a, b)}.`),
+      opt(s - 1 > 0 ? s - 1 : s + 2, false, `Count all the dots: ${a} red and ${b} yellow. Start at ${a}: ${countOn(a, b)}.`)])), explain: `${a} + ${b} = ${s}` };
+}
+function qTurn() {
+  let [a, b] = addPair(); if (a === b) b = b > 1 ? b - 1 : b + 1; const s = a + b;
+  if (Math.random() < .5) return { skill: 'add', lead: `${a} + ${b} = ${s}`, line: [b, '+', a, '=', '_'], sep: ' ', lineClass: 'center', ask: 'Use the turn-around fact. What is the answer?', big: true,
+    options: sortNum(dedupeOpts([opt(s, true), opt(s + 1, false, `Same numbers in a different order make the same answer: ${s}.`), opt(s - 1, false, `Same numbers in a different order make the same answer: ${s}.`)])),
+    explain: `${a} + ${b} and ${b} + ${a} both make ${s}.` };
+  return { skill: 'add', lead: `Which is the same as ${a} + ${b}?`, ask: 'Choose the turn-around fact.', options: shuffle([opt(`${b} + ${a}`, true),
+    opt(`${a} + ${b + 1}`, false, `${a} + ${b + 1} makes ${s + 1}. A turn-around fact uses the same two numbers: ${b} + ${a}.`),
+    opt(`${b} + ${b}`, false, `${b} + ${b} makes ${b * 2}. A turn-around fact uses the same two numbers: ${b} + ${a}.`)]), explain: `${a} + ${b} = ${b} + ${a} = ${s}` };
+}
+function qWaysPick() {
+  const n = rand(4, 10), a = rand(1, n - 1), b = n - a, w1 = [a, b + 1], w2 = [Math.max(1, a - 1), b > 1 ? b - 1 : b];
+  return { skill: 'ways', lead: `Which is a way to make ${n}?`, ask: 'Choose one.', options: shuffle(dedupeOpts([opt(`${a} + ${b}`, true),
+    opt(`${w1[0]} + ${w1[1]}`, false, `${w1[0]} + ${w1[1]} makes ${w1[0] + w1[1]}, not ${n}.`),
+    opt(`${w2[0]} + ${w2[1]}`, false, `${w2[0]} + ${w2[1]} makes ${w2[0] + w2[1]}, not ${n}.`)])), explain: `${a} + ${b} = ${n}` };
+}
+
+/* ================= Question generators: shapes ================= */
+const TCOL = [['#ff8a3d', 'orange'], ['#4f7cff', 'blue'], ['#46b04a', 'green'], ['#a660ff', 'purple']];
+function hexPts(cx, cy, r) { return Array.from({ length: 6 }, (_, k) => { const a = (-90 + 60 * k) * Math.PI / 180; return (cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1); }).join(' '); }
+function shapeIcon(shape, col) {
+  const S = { square: `<rect x="6" y="6" width="38" height="38" fill="${col}" stroke="#1d2b53" stroke-width="2"/>`, circle: `<circle cx="25" cy="25" r="20" fill="${col}" stroke="#1d2b53" stroke-width="2"/>`,
+    up: `<polygon points="4,44 25,6 46,44" fill="${col}" stroke="#1d2b53" stroke-width="2"/>`, down: `<polygon points="4,6 46,6 25,44" fill="${col}" stroke="#1d2b53" stroke-width="2"/>`,
+    hex: `<polygon points="${hexPts(25, 25, 21)}" fill="${col}" stroke="#1d2b53" stroke-width="2"/>`,
+    pent: `<polygon points="25,4 46,19 38,45 12,45 4,19" fill="${col}" stroke="#1d2b53" stroke-width="2"/>`,
+    star: `<path d="${starPath(25, 26, 22, 9)}" fill="${col}" stroke="#1d2b53" stroke-width="2"/>` };
+  return `<svg viewBox="0 0 50 50" aria-hidden="true">${S[shape]}</svg>`;
+}
+function qTile() {
+  const v = rand(0, 3), [c1, c2] = shuffle(TCOL);
+  if (v === 0) {
+    const gr = rand(0, 2), gc = rand(0, 4); let s = '<svg class="art" viewBox="0 0 210 130" width="300" aria-label="Square tiles with one missing">';
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) {
+      const col = (r + c) % 2 ? c2[0] : c1[0];
+      s += r === gr && c === gc ? `<rect x="${5 + c * 40}" y="${5 + r * 40}" width="40" height="40" fill="#fff" stroke="#1d2b53" stroke-width="2" stroke-dasharray="5 4"/>` : `<rect x="${5 + c * 40}" y="${5 + r * 40}" width="40" height="40" fill="${col}" stroke="#1d2b53" stroke-width="2"/>`;
+    }
+    const right = (gr + gc) % 2 ? c2 : c1, wrong = right === c1 ? c2 : c1;
+    return { skill: 'shapes', svg: s + '</svg>', lead: 'One tile is missing.', ask: 'Which tile fills the gap?', big: true, options: shuffle([
+      opt(`${right[1]} square`, true, '', shapeIcon('square', right[0])), opt(`${wrong[1]} square`, false, 'Look at the pattern: the colours take turns, like a checkerboard.', shapeIcon('square', wrong[0])),
+      opt(`${right[1]} circle`, false, 'A circle would leave gaps in the corners. A square fits with no gaps.', shapeIcon('circle', right[0]))]), explain: `A ${right[1]} square fits with no gaps.` };
+  }
+  if (v === 1) {
+    const g = rand(1, 7); let s = '<svg class="art" viewBox="0 0 200 50" width="320" aria-label="Triangle tiles with one missing">';
+    for (let i = 0; i < 9; i++) {
+      const x = i * 20, up = i % 2 === 0, pts = up ? `${x},45 ${x + 20},5 ${x + 40},45` : `${x},5 ${x + 40},5 ${x + 20},45`;
+      s += i === g ? `<polygon points="${pts}" fill="#fff" stroke="#1d2b53" stroke-width="2" stroke-dasharray="4 3"/>` : `<polygon points="${pts}" fill="${up ? c1[0] : c2[0]}" stroke="#1d2b53" stroke-width="2"/>`;
+    }
+    const up = g % 2 === 0, col = up ? c1 : c2;
+    return { skill: 'shapes', svg: s + '</svg>', lead: 'The triangles fit together like a puzzle.', ask: 'Which tile fills the gap?', big: true, options: shuffle([
+      opt(`${col[1]} triangle pointing ${up ? 'up' : 'down'}`, true, '', shapeIcon(up ? 'up' : 'down', col[0])),
+      opt(`${col[1]} triangle pointing ${up ? 'down' : 'up'}`, false, 'Look at the neighbours: the triangles take turns pointing up and down.', shapeIcon(up ? 'down' : 'up', col[0])),
+      opt(`${col[1]} square`, false, 'A square does not fit in a triangle-shaped gap.', shapeIcon('square', col[0]))]), explain: `A triangle pointing ${up ? 'up' : 'down'} fits.` };
+  }
+  if (v === 2) {
+    const r = 20, w = r * Math.sqrt(3), gr = rand(0, 2), gc = rand(0, 3); let s = `<svg class="art" viewBox="0 0 ${(4.5 * w + 6).toFixed(0)} 116" width="260" aria-label="Hexagon tiles with one missing">`;
+    for (let row = 0; row < 3; row++) for (let c = 0; c < 4; c++) {
+      const cx = 3 + w / 2 + c * w + (row % 2 ? w / 2 : 0), cy = 22 + row * 30, pts = hexPts(cx, cy, r);
+      s += row === gr && c === gc ? `<polygon points="${pts}" fill="#fff" stroke="#1d2b53" stroke-width="2" stroke-dasharray="4 3"/>` : `<polygon points="${pts}" fill="${c1[0]}" stroke="#1d2b53" stroke-width="2"/>`;
+    }
+    return { skill: 'shapes', svg: s + '</svg>', lead: 'This is a honeycomb pattern.', ask: 'Which tile fills the gap?', big: true, options: shuffle([
+      opt('hexagon', true, '', shapeIcon('hex', c1[0])), opt('circle', false, 'A circle leaves little gaps around it. A hexagon fits with no gaps.', shapeIcon('circle', c1[0])),
+      opt('pentagon', false, 'A pentagon has 5 sides. The gap has 6 sides, so it needs a hexagon.', shapeIcon('pent', c1[0]))]), explain: 'Hexagons fit together with no gaps.' };
+  }
+  return { skill: 'shapes', lead: 'We want to cover a floor with tiles.', ask: 'Which tile covers the floor with no gaps?', big: true, options: shuffle([
+    opt('square', true, '', shapeIcon('square', c1[0])), opt('circle', false, 'Circles leave little gaps between them.', shapeIcon('circle', c1[0])),
+    opt('star', false, 'Stars have pointy corners that leave gaps between them.', shapeIcon('star', c1[0]))]), explain: 'Squares fit together with no gaps or overlaps.' };
+}
+
+/* ================= Question card ================= */
+function qCardHTML(q, num, nextLabel) {
+  const p = [`<div class="qhead"><span class="qnum">${num}</span><p class="qlead">${esc(q.lead || q.ask)}</p></div>`];
+  if (q.svg) p.push(q.svg);
+  if (q.pic) p.push(q.pic.n2 ? `<div class="addrow">${picsHTML(q.pic.art, q.pic.n)}<span class="plus">+</span>${picsHTML(q.pic.art, q.pic.n2)}</div><p class="pichelp">Tip: tap each picture to count it.</p>`
+                              : picsHTML(q.pic.art, q.pic.n) + '<p class="pichelp">Tip: tap each picture to count it.</p>');
+  if (q.blocks) p.push(blocksHTML(q.blocks));
+  if (q.line) p.push(`<p class="qline ${q.lineClass || ''}">${q.line.map(v => v === '_' ? '<span class="blank"></span>' : esc(v)).join(q.sep || ', ')}</p>`);
+  if (q.blocksPair) p.push(`<div class="cmpblocks">${q.blocksPair.map(n => `<div><b>${n}</b>${blocksHTML(n, 'sm')}</div>`).join('')}</div>`);
+  if (q.table) p.push(`<table class="ctable"><tr><th>10 Less</th><th>Number</th><th>10 More</th></tr><tr><td><span class="sq"></span></td><td>${q.table}</td><td><span class="sq"></span></td></tr></table>`);
+  if (q.lead) p.push(`<p class="qask">${esc(q.ask)}</p>`);
+  p.push(`<div class="opts${q.big ? ' big' : ''}" role="group" aria-label="Answer choices">${q.options.map((o, i) =>
+    `<button class="opt" id="opt${i}" data-i="${i}" aria-label="${esc(o.t)}">${q.big ? '' : '<span class="bub"></span>'}<span class="ot">${o.html || esc(o.t)}</span></button>`).join('')}</div>`);
+  p.push(`<div class="qfoot"><button class="btn" id="readBtn">Read it to me</button>${nextLabel ? `<button class="btn go" id="nextQ" hidden>${nextLabel}</button>` : ''}</div>`);
+  return `<div class="qcard">${p.join('')}</div>`;
+}
+function readText(q) {
+  const symSay = t => t === '>' ? 'greater than' : t === '<' ? 'less than' : t === '=' ? 'equal to' : t;
+  return [q.lead, q.line ? q.line.map(v => v === '_' ? 'blank' : v).join(q.sep === ' ' ? ' ' : ', ') : '', q.table ? `The number is ${q.table}. The 10 less and 10 more boxes are empty.` : '',
+    q.ask, ...q.options.map((o, i) => `Answer ${i + 1}: ${symSay(o.t)}`)].filter(Boolean).join('. ');
+}
+function mountQ(q, num, o) {
+  q.tries = 0; q.done = false;
+  const st = $('#stage');
+  st.innerHTML = qCardHTML(q, num, o.nextLabel);
+  if (q.pic) wirePics(st, q.pic.st);
+  st.querySelectorAll('.opt').forEach(btn => btn.onclick = () => pickOpt(q, btn, +btn.dataset.i, o));
+  $('#readBtn').onclick = () => say(readText(q));
+}
+function pickOpt(q, btn, i, o) {
+  const op = q.options[i];
+  if (o.mode === 'mock') {
+    $('#stage').querySelectorAll('.opt').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel'); tick(); o.onSelect(i);
+    return;
+  }
+  if (q.done) return;
+  if (op.ok) {
+    q.done = true; btn.classList.add('right');
+    $('#stage').querySelectorAll('.opt').forEach(b => b.disabled = true);
+    record(q.skill, q.tries === 0);
+    setHint(q.explain, true); praise(q.explain);
+    o.onRight(q.tries === 0);
+  } else {
+    q.tries++; mistakes++; btn.classList.add('nope'); btn.disabled = true; wobble(btn);
+    setHint(op.why); oops(op.why);
+  }
+}
+
+/* ================= Round-based game runner ================= */
+let gm = null;
+function runGame(rounds, makeRound) { gm = { rounds, makeRound, i: 0, first: 0 }; gameRound(); }
+function gameRound() {
+  const g = gm, myRun = run;
+  misStreak = 0; setHint(''); setAsk('');
+  dotsTrail(g.rounds, g.i);
+  let called = false;
+  g.makeRound(g.i)(first => {
+    if (run !== myRun || called) return; called = true;
+    if (first) g.first++;
+    g.i++;
+    if (g.i >= g.rounds) { const f = g.first / g.rounds; win({ stars: f >= .85 ? 3 : f >= .6 ? 2 : 1, text: `${g.first} of ${g.rounds} right on the first try.` }); }
+    else gameRound();
+  });
+}
+const mcqRound = (gen, wait = 2300) => done => {
+  const q = gen();
+  mountQ(q, gm.i + 1, { mode: 'game', onRight: first => later(() => done(first), wait) });
+};
+
+/* Block Builder: build a number with hundreds, tens and ones */
+function buildRound(done) {
+  const n = pickN(); let h = 0, t = 0, o = 0, tries = 0, solved = false;
+  const st = $('#stage');
+  st.innerHTML = `<div class="qcard"><div class="qhead"><span class="qnum">${gm.i + 1}</span><p class="qlead">Build <b>${n}</b> with blocks.</p></div>
+    <div id="bb"></div>
+    <div class="pv">${[['h', 'Hundreds', 'var(--sun-d)'], ['t', 'Tens', 'var(--blue)'], ['o', 'Ones', 'var(--lily)']].map(([k, l, c]) =>
+      `<div class="pvcol" style="--c:${c}"><span class="pvl">${l}</span><span class="pvn" id="pv${k}">0</span><div class="pvbtns"><button id="${k}minus" aria-label="Remove one from ${l}">−</button><button id="${k}plus" aria-label="Add one to ${l}">+</button></div></div>`).join('')}</div>
+    <p class="built" id="built"></p>
+    <div class="qfoot"><button class="btn" id="readBtn">Read it to me</button><button class="btn go" id="chk">Check</button></div></div>`;
+  const draw = () => { $('#bb').innerHTML = blocksHTML(h * 100 + t * 10 + o); $('#pvh').textContent = h; $('#pvt').textContent = t; $('#pvo').textContent = o;
+    $('#built').textContent = `You built ${h * 100 + t * 10 + o}`; };
+  const lim = { h: 1, t: 9, o: 9 }, val = { h: () => h, t: () => t, o: () => o };
+  const set = (k, d) => { if (solved) return; const v = Math.max(0, Math.min(lim[k], val[k]() + d)); if (k === 'h') h = v; if (k === 't') t = v; if (k === 'o') o = v; tick(); draw(); };
+  ['h', 't', 'o'].forEach(k => { $(`#${k}minus`).onclick = () => set(k, -1); $(`#${k}plus`).onclick = () => set(k, 1); });
+  $('#readBtn').onclick = () => say(`Build ${n} with blocks. ${numberWord(n)}.`);
+  $('#chk').onclick = () => {
+    if (solved) return;
+    if (h * 100 + t * 10 + o === n) {
+      solved = true; record('build', tries === 0);
+      const m = `${n} is ${H(n) ? '1 hundred, ' : ''}${T(n)} tens and ${O(n)} ones.`; setHint(m, true); praise(m);
+      later(() => done(tries === 0), 2300);
+    } else {
+      tries++; mistakes++; wobble($('#bb'));
+      const why = h !== H(n) ? `${n} has ${H(n) ? '1 hundred' : 'no hundreds'}. You have ${h}.`
+        : t !== T(n) ? `Look at the tens. ${n} needs ${T(n)} tens rods. You have ${t}.` : `Look at the ones. ${n} needs ${O(n)} ones cubes. You have ${o}.`;
+      setHint(why); oops(why);
+    }
+  };
+  draw();
+  say(`Build ${n} with blocks.`);
+}
+
+/* Number Line: tap where a number goes */
+function placeRound(done) {
+  const c = pick(LINES); let n;
+  if (c.step === 10) n = rand(1, 9) * 10; else do n = rand(c.a + 1, c.b - 1); while (n % 5 === 0);
+  let tries = 0, solved = false;
+  const st = $('#stage');
+  const draw = (mark, col) => { $('#nlbox').innerHTML = lineSVG(c, { tap: true, mark, markColor: col }); $('#nlbox svg').onclick = tap; };
+  st.innerHTML = `<div class="qcard"><div class="qhead"><span class="qnum">${gm.i + 1}</span><p class="qlead">Tap where <b>${n}</b> goes on the number line.</p></div>
+    <div id="nlbox"></div><p class="arrowtxt">${c.step === 10 ? 'Each tick is 10 more.' : 'Each small tick is 1 more.'}</p>
+    <div class="qfoot"><button class="btn" id="readBtn">Read it to me</button></div></div>`;
+  function tap(e) {
+    if (solved) return;
+    const r = e.currentTarget.getBoundingClientRect(), vx = (e.clientX - r.left) / r.width * 640;
+    let v = c.a + Math.round(((vx - 30) / 580 * (c.b - c.a)) / c.step) * c.step; v = Math.max(c.a, Math.min(c.b, v));
+    if (v === n) { solved = true; draw(v, '#2f8a3a'); record('numline', tries === 0); praise(`${n} goes right there.`); setHint(`Yes! That is ${n}.`, true); later(() => done(tries === 0), 2000); }
+    else {
+      tries++; mistakes++; draw(v, '#ff5d73');
+      const d = Math.abs(n - v), why = `You tapped ${v}. ${n} is ${d} ${n > v ? 'more, so go right' : 'less, so go left'}.`;
+      setHint(why); oops(why);
+    }
+  }
+  draw();
+  $('#readBtn').onclick = () => say(`Tap where ${n} goes on the number line.`);
+  say(`Tap where ${n} goes on the number line.`);
+}
+
+/* Greatest & Least: tap numbers in order */
+function orderRound(done) {
+  const nums = threeNums(4), asc = Math.random() < .65, word = asc ? 'least to greatest' : 'greatest to least';
+  let left = nums.slice(), placed = [], errs = 0, solved = false;
+  const st = $('#stage');
+  st.innerHTML = `<div class="qcard"><div class="qhead"><span class="qnum">${gm.i + 1}</span><p class="qlead">Put the numbers in order from <b style="font-size:1em">${word}</b>.</p></div>
+    <div class="slots">${nums.map((_, i) => `<span class="slot" id="slot${i}"></span>`).join('')}</div>
+    <div class="tiles">${nums.map((v, i) => `<button class="tile" id="card${i}" data-v="${v}">${v}</button>`).join('')}</div>
+    <div class="qfoot"><button class="btn" id="readBtn">Read it to me</button></div></div>`;
+  st.querySelectorAll('.tile').forEach(b => b.onclick = () => {
+    if (solved) return;
+    const v = +b.dataset.v, want = asc ? Math.min(...left) : Math.max(...left);
+    if (v === want) {
+      const s = $(`#slot${placed.length}`); s.textContent = v; s.classList.add('full'); placed.push(v);
+      left = left.filter(x => x !== v); b.disabled = true; tone([[500 + placed.length * 90, .1]]); say(v);
+      if (!left.length) { solved = true; record('order', errs === 0); const m = `${word}: ${join(placed)}.`; setHint(m, true); praise(m); later(() => done(errs === 0), 2300); }
+    } else {
+      errs++; mistakes++; wobble(b);
+      const why = `Not yet. Find the ${asc ? 'smallest' : 'biggest'} number left. ${v} is ${asc ? 'bigger' : 'smaller'} than ${want}.`;
+      setHint(why); oops(why);
+    }
+  });
+  $('#readBtn').onclick = () => say(`Put the numbers in order from ${word}: ${join(nums)}.`);
+  say(`Put the numbers in order from ${word}.`);
+}
+
+/* Make 10: tap two numbers that make 10 */
+function pairsRound(done) {
+  const ks = shuffle([1, 2, 3, 4, 5]).slice(0, 4), vals = shuffle(ks.flatMap(k => [k, 10 - k]));
+  let sel = null, left = 4, errs = 0, since = 0;
+  const st = $('#stage');
+  st.innerHTML = `<div class="qcard"><div class="qhead"><span class="qnum">${gm.i + 1}</span><p class="qlead">Tap two bubbles that make 10.</p></div>
+    <div class="pairs">${vals.map((v, i) => `<button class="pairbtn" id="pb${i}" data-v="${v}" style="background:${BCOLORS[i % BCOLORS.length]}">${v}</button>`).join('')}</div>
+    <div class="qfoot"><button class="btn" id="readBtn">Read it to me</button></div></div>`;
+  st.querySelectorAll('.pairbtn').forEach(b => b.onclick = () => {
+    if (b.classList.contains('gone') || !left) return;
+    if (!sel) { sel = b; b.classList.add('sel'); tick(); return; }
+    if (sel === b) { b.classList.remove('sel'); sel = null; return; }
+    const x = +sel.dataset.v, y = +b.dataset.v;
+    if (x + y === 10) {
+      sel.classList.add('gone'); b.classList.add('gone'); sel = null; left--; record('make10', since === 0); since = 0;
+      const m = `${x} + ${y} = 10`; setHint(m, true); praise(m);
+      if (!left) later(() => done(errs === 0), 1800);
+    } else {
+      errs++; since++; mistakes++; wobble(b); wobble(sel); sel.classList.remove('sel'); sel = null;
+      const why = `${x} + ${y} = ${x + y}. We need 10.`; setHint(why); oops(why);
+    }
+  });
+  $('#readBtn').onclick = () => say('Tap two bubbles that make 10.');
+  say('Tap two bubbles that make 10.');
+}
+
+/* Ways to Make: flip counters to find 3 ways */
+function waysRound(n) {
+  return done => {
+    const isY = Array(n).fill(false), found = []; let errs = 0, solved = false;
+    const st = $('#stage');
+    st.innerHTML = `<div class="qcard"><div class="qhead"><span class="qnum">${gm.i + 1}</span><p class="qlead">Find 3 ways to make <b>${n}</b>.</p></div>
+      <p class="pichelp">Tap counters to turn them yellow. Then press "This is a way!"</p>
+      <div class="ctrs">${isY.map((_, i) => `<button class="ctr" id="ctr${i}" data-i="${i}" aria-label="Counter ${i + 1}"></button>`).join('')}</div>
+      <p class="eqbig" id="weq"></p>
+      <div class="found" id="wfound"></div>
+      <div class="qfoot"><button class="btn" id="readBtn">Read it to me</button><button class="btn go" id="wsave">This is a way!</button></div></div>`;
+    const counts = () => { const y = isY.filter(Boolean).length; return [n - y, y]; };
+    const draw = () => { const [r, y] = counts(); $('#weq').innerHTML = `<span class="r">${r}</span> + <span class="y">${y}</span> = ${n}`;
+      $('#wfound').innerHTML = found.map(f => `<span>${f}</span>`).join('') || '<span style="background:none;color:var(--muted)">Ways you find show up here</span>'; };
+    st.querySelectorAll('.ctr').forEach(b => b.onclick = () => { if (solved) return; const i = +b.dataset.i; isY[i] = !isY[i]; b.classList.toggle('y', isY[i]); tick(); draw(); });
+    $('#wsave').onclick = () => {
+      if (solved) return;
+      const [r, y] = counts(), f = `${r} + ${y}`;
+      if (!r || !y) { errs++; mistakes++; const why = 'Make two groups: some red and some yellow.'; setHint(why); oops(why); return; }
+      if (found.includes(f)) { bad(); const why = `You already found ${f}. Try a different way.`; setHint(why); say(why); return; }
+      found.push(f); record('ways', true); draw();
+      if (found.length >= 3) { solved = true; const m = `${join(found)}. All make ${n}!`; setHint(m, true); praise(m); later(() => done(errs === 0), 2400); }
+      else { const m = `${f} = ${n}. Find ${3 - found.length} more.`; setHint(m, true); praise(m); }
+    };
+    $('#readBtn').onclick = () => say(`Find 3 ways to make ${n}. Tap counters to turn them yellow.`);
+    draw(); say(`Find 3 ways to make ${n}.`);
+  };
+}
+
+/* ================= Quiz runner (practice + mock) ================= */
+const PRACTICE = {
+  counting: [['by1', () => qCount1(pick(['up', 'down']))], ['by2', () => pick([qWhich, qAfter])(2)], ['by5', () => pick([qWhich, qAfter])(5)],
+    ['by10', () => pick([qWhich, qAfter])(10)], ['missing', () => qMissing(pick([2, 5, 10]))], ['pictures', () => qPicTotal(pick([2, 5, 10]))], ['tens', () => pick([qTensChart, qTenLM])()]],
+  numbers: [['build', qBlocksRead], ['words', qWord], ['expanded', () => pick([qExpPick, qExpBlank, qExpRev])()], ['numline', () => pick([qNumlineRead, qBetween])()]],
+  compare: [['compare', () => qCompare(Math.random() < .3)], ['order', () => pick([qGreatest, qOrderPick])()]],
+  addition: [['make10', () => pick([qFrame, qBond])()], ['add', () => pick([qAddPic, qStory, qAddEq, qTurn])()], ['ways', qWaysPick]],
+};
+PRACTICE.all = [...PRACTICE.counting, ...PRACTICE.numbers, ...PRACTICE.compare, ...PRACTICE.addition];
+let lastSkill = '';
+function practiceQ(t) {
+  const gens = PRACTICE[t], c = gens.length > 1 ? gens.filter(p => p[0] !== lastSkill) : gens, w = c.map(p => 1 + 3 * missRate(p[0]));
+  let r = Math.random() * w.reduce((a, b) => a + b, 0), i = 0;
+  while (i < c.length - 1 && r > w[i]) { r -= w[i]; i++; }
+  lastSkill = c[i][0];
+  return c[i][1]();
+}
+function mockList(t) {
+  if (t === 'counting') return [qCount1('up'), qCount1('down'), qWhich(2), qAfter(2, true), qPicTotal(5), qWhich(5), qMissing(5), qTensChart(), qTenLM()];
+  const gens = t === 'all' ? shuffle(PRACTICE.all) : PRACTICE[t];
+  return Array.from({ length: 9 }, (_, i) => gens[i % gens.length][1]());
+}
+let qz = { kind: 'practice', t: 'counting', list: [], i: 0, answers: [], firstOk: 0 };
+const qCount = () => qz.kind === 'mock' ? 9 : 10;
+function quizStart(kind, t) {
+  qz = { kind, t, list: kind === 'mock' ? mockList(t) : [], i: 0, answers: [], firstOk: 0 };
+  if (mode === 'daily' || kind !== 'mock') $('#gtitle').textContent = mode === 'daily' ? 'Daily Mix' : `Quick Practice: ${TOPIC_NAMES[t]}`;
+  else $('#gtitle').textContent = `Mock Test: ${TOPIC_NAMES[t]}`;
+  say(kind === 'mock' ? 'Mock test. Choose the best answer for each question.' : 'Choose the best answer.');
+  quizShow();
+}
+function quizShow() {
+  if (!qz.list[qz.i]) qz.list[qz.i] = practiceQ(qz.t);
+  const q = qz.list[qz.i], n = qCount(), last = qz.i === n - 1;
+  misStreak = 0; setHint('');
+  dotsTrail(n, qz.i);
+  setAsk(`Question ${qz.i + 1} of ${n}`);
+  mountQ(q, qz.i + 1, { mode: qz.kind, nextLabel: last ? (qz.kind === 'mock' ? 'Finish test' : 'Finish') : 'Next question',
+    onSelect: i => { qz.answers[qz.i] = i; $('#nextQ').hidden = false; },
+    onRight: first => { if (first) qz.firstOk++; const nx = $('#nextQ'); nx.hidden = false; nx.focus(); } });
+  $('#nextQ').onclick = () => { qz.i++; if (qz.i >= n) quizFinish(); else quizShow(); };
+}
+function quizFinish() {
+  if (qz.kind === 'practice') {
+    const f = qz.firstOk;
+    win({ stars: f >= 9 ? 3 : f >= 6 ? 2 : 1, text: `You got ${f} of 10 right on the first try.`, seqText: '' });
+    return;
+  }
+  const list = qz.list; let score = 0;
+  list.forEach((q, i) => { const ok = !!(q.options[qz.answers[i]] || {}).ok; if (ok) score++; record(q.skill, ok); });
+  mockHist.push({ d: new Date().toISOString().slice(0, 10), s: score, t: qz.t }); if (mockHist.length > 30) mockHist.shift();
+  store('hopcount-mock', mockHist);
+  dotsTrail(9, -1, i => (list[i].options[qz.answers[i]] || {}).ok);
+  setAsk('Your test score'); setHint('');
+  const msg = score === 9 ? 'Perfect test! Every answer is right.' : score >= 7 ? 'Great job! Look at the ones you missed below.' : 'Good try! Read the answers below, then do some Quick Practice.';
+  $('#stage').innerHTML = `<div class="score"><span class="big">${score}</span><span>out of 9</span></div><p class="scoremsg">${msg}</p>
+    <ol class="res">${list.map((q, i) => {
+      const o = q.options[qz.answers[i]], ok = !!(o && o.ok), right = q.options.find(x => x.ok);
+      const ctx = q.line ? q.line.map(v => v === '_' ? '___' : v).join(q.sep || ', ') : q.table ? `Chart: 10 less | ${q.table} | 10 more` : q.blocks ? `Blocks: ${H(q.blocks)} hundreds, ${T(q.blocks)} tens, ${O(q.blocks)} ones` : q.pic ? `(${q.pic.n}${q.pic.n2 ? ' + ' + q.pic.n2 : ''} pictures)` : '';
+      return `<li class="${ok ? 'ok' : 'no'}"><div class="rhead"><span class="qnum">${i + 1}</span><span class="rmark">${ok ? 'Right' : 'Not quite'}</span></div>
+        <p>${esc((q.lead ? q.lead + ' ' : '') + q.ask)}</p>${ctx ? `<p class="rctx">${esc(ctx)}</p>` : ''}
+        ${ok ? `<p>Answer: <b>${esc(right.t)}</b></p>` : `<p>Your answer: <b>${o ? esc(o.t) : 'none'}</b></p><p>Right answer: <b>${esc(right.t)}</b></p><p class="why">${o ? esc(o.why) : ''}</p>`}</li>`;
+    }).join('')}</ol>
+    <div class="winbtns" style="margin-top:16px"><button class="btn go" id="mockAgain">Take another test</button><button class="btn" id="mockPractice">Quick Practice</button><button class="btn" id="mockHome">Home</button></div>`;
+  $('#mockAgain').onclick = () => startMode('mock');
+  $('#mockPractice').onclick = () => startMode('practice');
+  $('#mockHome').onclick = goHome;
+  if (score >= 7) { cheer(); confetti(); }
+  say(`You got ${score} out of 9. ${msg}`);
+  updateHome();
+}
+
+/* ================= Count the Pictures ================= */
+const PIC_ROUNDS = 5;
+let pc = { round: 0 };
+function picsStart() { pc.round = 0; picsNext(); }
+function picsNext() {
+  pc.round++; misStreak = 0; setHint('');
+  const st = pick([2, 5, 10]), o = pick(OBJ[st]);
+  const N = st === 10 ? rand(4, 9) : st === 5 ? rand(5, 12) : rand(5, 10), total = N * st, each = fixEach(o.each);
+  dotsTrail(PIC_ROUNDS, pc.round - 1);
+  setAsk('');
+  $('#stage').innerHTML = `<div class="qcard"><div class="qhead"><span class="qnum">${pc.round}</span><p class="qlead">${each}</p></div>
+    <p class="qask">Tap each picture to skip count by ${WORD[st]}.</p>${picsHTML(o.art, N)}<div id="picQ"></div></div>`;
+  say(`${each} Tap each picture to count by ${WORD[st]}.`);
+  let tries = 0;
+  wirePics($('#stage'), st, () => {
+    const ops = shuffle([opt(total, true), opt(N, false, `${N} is how many ${o.many} there are. Look at the numbers under the pictures: the last one tells how many ${o.unit}.`),
+      opt(total + st, false, `Look at the number under the last picture. That is how many ${o.unit} in all.`)]);
+    $('#picQ').innerHTML = `<p class="qask">How many ${o.unit} in all?</p><div class="opts big">${ops.map((x, i) => `<button class="opt" data-i="${i}"><span class="ot">${x.t}</span></button>`).join('')}</div>`;
+    later(() => say(`How many ${o.unit} in all?`), 700);
+    $('#picQ').querySelectorAll('.opt').forEach(btn => btn.onclick = () => {
+      const x = ops[+btn.dataset.i];
+      if (x.ok) {
+        record('pictures', tries === 0); btn.classList.add('right');
+        $('#picQ').querySelectorAll('.opt').forEach(b => b.disabled = true);
+        setHint(`${total} ${o.unit}.`, true); praise(`${total} ${o.unit}`);
+        later(() => pc.round < PIC_ROUNDS ? picsNext() : win({ text: `You counted ${PIC_ROUNDS} groups of pictures by skip counting.` }), 1900);
+      } else { tries++; mistakes++; btn.classList.add('nope'); btn.disabled = true; wobble(btn); setHint(x.why); oops(x.why); }
+    });
+  });
+}
+
+/* ================= 10 More, 10 Less ================= */
+const TENS_ROUNDS = 8;
+let tn = { round: 0 };
+function tensStart() { tn.round = 0; say('Find 10 more and 10 less on the chart.'); tensNext(); }
+function tensNext() {
+  tn.round++; tn.more = Math.random() < .5; tn.n = tn.more ? rand(1, 110) : rand(11, 120);
+  tn.target = tn.more ? tn.n + 10 : tn.n - 10; tn.done = false; tn.tries = 0; setHint('');
+  dotsTrail(TENS_ROUNDS, tn.round - 1);
+  const word = tn.more ? 'more' : 'less';
+  setAsk(`Tap the number that is 10 ${word} than ${tn.n}.`);
+  $('#stage').innerHTML = `<div class="chart" id="chart">${Array.from({ length: 120 }, (_, i) => `<button class="cell${Math.floor(i / 10) % 2 ? ' alt' : ''}${i + 1 === tn.n ? ' here' : ''}" data-v="${i + 1}">${i + 1}</button>`).join('')}</div>`;
+  say(`Tap the number that is 10 ${word} than ${tn.n}`);
+  $('#chart').onclick = e => { const c = e.target.closest('.cell'); if (c) tensPick(c, +c.dataset.v); };
+}
+function tensPick(cell, v) {
+  if (tn.done || v === tn.n) return;
+  const n = tn.n, more = tn.more;
+  if (v === tn.target) {
+    tn.done = true; cell.classList.add('ok'); record('tens', tn.tries === 0);
+    const msg = `${n} ${more ? '+' : '−'} 10 = ${tn.target}. ${more ? 'One row down' : 'One row up'}, same column.`;
+    setHint(msg, true); praise(msg);
+    later(() => tn.round < TENS_ROUNDS ? tensNext() : win({ text: `You found 10 more and 10 less ${TENS_ROUNDS} times.` }), 2300);
+  } else {
+    tn.tries++; mistakes++; wobble(cell); cell.classList.add('no'); setTimeout(() => cell.classList.remove('no'), 600);
+    let why;
+    if (Math.abs(v - n) === 1) why = `${v} is 1 ${v > n ? 'more' : 'less'}. For 10 ${more ? 'more' : 'less'}, go ${more ? 'down' : 'up'} one row, in the same column as ${n}.`;
+    else if (v === n + (more ? -10 : 10)) why = `That is 10 ${more ? 'less' : 'more'}. ${more ? 'More means bigger: go down a row.' : 'Less means smaller: go up a row.'}`;
+    else why = `Find ${n}, then go ${more ? 'down' : 'up'} one row in the same column.`;
+    setHint(why); oops(why);
+    if (tn.tries >= 2) { const t = $(`.cell[data-v="${tn.target}"]`); t.classList.remove('peek'); void t.offsetWidth; t.classList.add('peek'); }
+  }
+}
+
+/* ================= Progress ================= */
+const SKILL_GROUPS = [
+  ['Counting & skip counting', [['by1', 'Count by 1s past 100'], ['by2', 'Skip count by 2s'], ['by5', 'Skip count by 5s'], ['by10', 'Skip count by 10s'],
+    ['missing', 'Find the missing numbers'], ['pictures', 'Count groups of pictures'], ['tens', '10 more and 10 less'], ['by3', 'Skip count by 3s'], ['by4', 'Skip count by 4s']]],
+  ['Numbers to 120', [['build', 'Build and read numbers with blocks'], ['words', 'Number words'], ['expanded', 'Expanded form'], ['numline', 'Number lines']]],
+  ['Compare & order', [['compare', 'Greater than, less than, equal'], ['order', 'Greatest, least and ordering']]],
+  ['Addition to 10', [['make10', 'Make 10'], ['add', 'Adding with pictures and stories'], ['ways', 'Ways to make a number']]],
+  ['Shapes', [['shapes', 'Tile patterns']]],
+];
+function showProgress() {
+  show('progress');
+  const all = [];
+  const groups = SKILL_GROUPS.map(([gname, list]) => {
+    const rows = list.filter(([k]) => !['by3', 'by4'].includes(k) || prog[k]).map(([k, name]) => {
+      const s = prog[k]; let pill = '<span class="pill">Not tried yet</span>', bar = '', note = 'Not played yet.', cls = '';
+      if (s && s.r.length) {
+        const right = s.r.reduce((a, b) => a + b, 0), acc = right / s.r.length;
+        cls = s.r.length < 3 ? '' : acc >= .8 ? 'strong' : acc >= .5 ? 'mid' : 'weak';
+        pill = `<span class="pill ${cls}">${s.r.length < 3 ? 'Just started' : acc >= .8 ? 'Strong' : acc >= .5 ? 'Getting there' : 'Needs practice'}</span>`;
+        bar = `<div class="meter"><i class="${cls}" style="width:${Math.round(acc * 100)}%"></i></div>`;
+        note = `${right} of the last ${s.r.length} right on the first try`;
+        if (s.r.length >= 3) all.push({ name, miss: 1 - acc });
+      }
+      return `<div class="skill"><div class="skill-top"><span class="skill-name">${name}</span>${pill}</div>${bar}<small>${note}</small></div>`;
+    });
+    return `<h3 class="pg-h">${gname}</h3><div class="skills">${rows.join('')}</div>`;
+  });
+  const weak = all.filter(r => r.miss > .2).sort((a, b) => b.miss - a.miss).slice(0, 2);
+  const hist = mockHist.slice(-6).reverse();
+  $('#progBody').innerHTML = `
+    <div class="tipbox">${weak.length ? `<b>Practise next:</b> ${weak.map(w => w.name).join(' and ')}. Daily Mix asks more of these automatically.` : 'Daily Mix gives more questions on the skills your child misses. Results show up here as they play.'}</div>
+    ${groups.join('')}
+    <div class="history"><b>Mock test scores</b>${hist.length ? `<ol>${hist.map(h => `<li>${h.d}, ${TOPIC_NAMES[h.t || 'counting']}: ${h.s} out of 9</li>`).join('')}</ol>` : '<p style="margin:6px 0 0">No mock tests yet.</p>'}</div>
+    <p class="sec-p" style="margin-top:12px">Progress is saved in this browser only.</p>
+    <div class="confirmrow" id="resetRow"><button class="btn" id="resetBtn">Clear all progress</button></div>`;
+  $('#resetBtn').onclick = () => {
+    $('#resetRow').innerHTML = '<span>Clear all stars, scores and progress on this device?</span><button class="btn warn" id="resetYes">Yes, clear</button><button class="btn" id="resetNo">Cancel</button>';
+    $('#resetYes').onclick = () => { best = {}; prog = {}; mockHist = []; store('hopcount-best', best); store('hopcount-skills', prog); store('hopcount-mock', mockHist); showProgress(); };
+    $('#resetNo').onclick = showProgress;
+  };
+}
+
+/* ================= Win ================= */
+function win(o = {}) {
+  stopBalloons();
+  const stars = o.stars || (mistakes <= 1 ? 3 : mistakes <= 4 ? 2 : 1);
+  const k = key(mode);
+  best[k] = Math.max(best[k] || 0, stars); store('hopcount-best', best);
+  $('#winStars').innerHTML = '<b>★</b>'.repeat(stars) + '★'.repeat(3 - stars);
+  $('#winStars').setAttribute('aria-label', `${stars} of 3 stars`);
+  $('#winTitle').textContent = stars === 3 ? 'Super job!' : stars === 2 ? 'Great work!' : 'You did it!';
+  const isStep = STEP_GAMES.includes(mode), s = curSeq;
+  $('#winText').textContent = o.text || `You counted ${dir} by ${step}s, from ${s[0]} to ${s[s.length - 1]}.`;
+  $('#winSeq').textContent = o.seqText !== undefined ? o.seqText : isStep && mode !== 'train' ? join(s) : '';
+  $('#nextBtn').hidden = !isStep;
+  const i = STEPS.indexOf(step);
+  $('#nextBtn').textContent = `Try counting by ${STEPS[(i + 1) % STEPS.length]}s`;
+  $('#win').hidden = false;
+  cheer(); later(() => say($('#winTitle').textContent + ' ' + $('#winText').textContent), 600);
+  confetti();
+  $('#againBtn').focus();
+}
+function confetti() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('span');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = BCOLORS[i % BCOLORS.length];
+    c.style.animationDuration = (1.6 + Math.random() * 1.6) + 's';
+    c.style.animationDelay = (Math.random() * .4) + 's';
+    c.style.borderRadius = i % 3 ? '3px' : '50%';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3800);
+  }
+}
+
+updateHome();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
